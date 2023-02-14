@@ -1,15 +1,15 @@
-package com.chat.service.message.sender;
+package com.chat.service.impl.message.sender;
 
-import com.chat.service.message.sender.Message;
+import com.chat.service.core.message.sender.MessageSenderService;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MessageSender {
+public class MessageSenderServiceImpl implements MessageSenderService {
 
     private JmsTemplate jmsTemplate;
 
-    public MessageSender(JmsTemplate jmsTemplate) {
+    public MessageSenderServiceImpl(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
     }
     // this method should store the sent message and all its details in the database

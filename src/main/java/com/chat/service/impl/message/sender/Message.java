@@ -1,4 +1,4 @@
-package com.chat.service.message.sender;
+package com.chat.service.impl.message.sender;
 
 import java.util.Objects;
 

@@ -1,7 +1,7 @@
 package com.chat;
 
-import com.chat.service.message.sender.Message;
-import com.chat.service.message.sender.MessageSender;
+import com.chat.service.impl.message.sender.Message;
+import com.chat.service.impl.message.sender.MessageSenderServiceImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -16,6 +16,6 @@ public class Main {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Main.class, args);
-        context.getBean(MessageSender.class).sendMessage(new Message("message", "user"));
+        context.getBean(MessageSenderServiceImpl.class).sendMessage(new Message("message", "user"));
     }
 }
