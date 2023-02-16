@@ -4,6 +4,9 @@ import com.chat.service.core.message.sender.MessageSenderService;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.print.attribute.standard.Destination;
+import java.net.URI;
+
 @Component
 public class MessageSenderServiceImpl implements MessageSenderService {
 
@@ -13,7 +16,7 @@ public class MessageSenderServiceImpl implements MessageSenderService {
         this.jmsTemplate = jmsTemplate;
     }
     // this method should store the sent message and all its details in the database
-    public void sendMessage(Message message) {
-        jmsTemplate.convertAndSend("mailbox", message);
+    public void sendMessage(MessageCreationParams messageCreationParams) {
+        jmsTemplate.convertAndSend(messageCreationParams);
     }
 }

@@ -2,15 +2,15 @@ package com.chat.service.impl.message.sender;
 
 import java.util.Objects;
 
-public class Message {
+public class MessageCreationParams {
 
     private String message;
     private String destinationUser;
 
-    public Message() {
+    public MessageCreationParams() {
     }
 
-    public Message(String message, String destinationUser) {
+    public MessageCreationParams(String message, String destinationUser) {
         this.message = message;
         this.destinationUser = destinationUser;
     }
@@ -35,7 +35,7 @@ public class Message {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Message that = (Message) o;
+        MessageCreationParams that = (MessageCreationParams) o;
         return Objects.equals(message, that.message) && Objects.equals(destinationUser, that.destinationUser);
     }
 
