@@ -1,7 +1,7 @@
 package com.chat;
 
-import com.chat.service.impl.message.sender.MessageCreationParams;
-import com.chat.service.impl.message.sender.MessageSenderServiceImpl;
+import com.chat.service.impl.message.sender.PrivateMessageCreationParams;
+import com.chat.service.impl.message.sender.MessageSenderServiceJMSImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -15,7 +15,6 @@ import org.springframework.jms.annotation.EnableJms;
 public class Main {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(Main.class, args);
-        context.getBean(MessageSenderServiceImpl.class).sendMessage(new MessageCreationParams("message", "user"));
+        SpringApplication.run(Main.class, args);
     }
 }
