@@ -5,16 +5,19 @@ import com.chat.service.impl.message.sender.PrivateMessageCreationParams;
 import com.chat.service.impl.message.sender.PublicMessageCreationParams;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MessageReceiverServiceJMSImpl implements MessageReceiverService {
 
+    @Transactional
     @JmsListener(destination = "user", containerFactory = "myFactory")
     @Override
     public void receivePrivateMessage(PrivateMessageCreationParams privateMessageCreationParams) {
         System.out.println("Received message - " + privateMessageCreationParams.getMessage());
     }
 
+    @Transactional
     @JmsListener(destination = "chatroom", containerFactory = "myFactory")
     @Override
     public void receivePublicMessage(PublicMessageCreationParams publicMessageCreationParams) {

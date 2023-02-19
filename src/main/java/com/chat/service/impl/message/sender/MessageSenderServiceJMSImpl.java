@@ -4,6 +4,7 @@ import com.chat.service.core.message.sender.MessageSenderService;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -16,11 +17,13 @@ public class MessageSenderServiceJMSImpl implements MessageSenderService {
     }
 
     // this method should store the sent message and all its details in the database
+    @Transactional
     @Override
     public void sendPrivateMessage(PrivateMessageCreationParams privateMessageCreationParams) {
         jmsTemplate.convertAndSend(privateMessageCreationParams);
     }
 
+    @Transactional
     @Override
     public void sendPublicMessage(PublicMessageCreationParams publicMessageCreationParams) {
         jmsTemplate.convertAndSend(publicMessageCreationParams);

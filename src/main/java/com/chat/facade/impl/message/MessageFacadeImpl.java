@@ -1,15 +1,15 @@
-package com.chat.facade.message;
+package com.chat.facade.impl.message;
 
 import com.chat.dto.request.SendPrivateMessageRequestDto;
 import com.chat.dto.request.SendPublicMessageRequestDto;
 import com.chat.dto.response.SendPrivateMessageResponseDto;
 import com.chat.dto.response.SendPublicMessageResponseDto;
+import com.chat.facade.core.message.MessageFacade;
 import com.chat.service.core.message.receiver.MessageReceiverService;
 import com.chat.service.core.message.sender.MessageSenderService;
 import com.chat.service.impl.message.sender.PrivateMessageCreationParams;
 import com.chat.service.impl.message.sender.PublicMessageCreationParams;
 import io.jsonwebtoken.lang.Assert;
-import org.apache.logging.log4j.message.SimpleMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -18,14 +18,14 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component
-public class MessageFacade {
+public class MessageFacadeImpl implements MessageFacade {
 
     private final MessageSenderService messageSenderService;
     private final MessageReceiverService messageReceiverService;
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final Logger LOGGER = LoggerFactory.getLogger(MessageFacade.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(MessageFacadeImpl.class);
 
-    public MessageFacade(MessageSenderService messageSenderService, MessageReceiverService messageReceiverService, SimpMessagingTemplate simpMessagingTemplate) {
+    public MessageFacadeImpl(MessageSenderService messageSenderService, MessageReceiverService messageReceiverService, SimpMessagingTemplate simpMessagingTemplate) {
         Assert.notNull(messageReceiverService, "Message Receiver Service must not be null");
         Assert.notNull(messageSenderService, "Message Sender Service must not be null");
         Assert.notNull(simpMessagingTemplate, "Simple Messaging Template must not be null");

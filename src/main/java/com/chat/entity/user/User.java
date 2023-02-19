@@ -38,7 +38,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     private List<UserChat> userChats;
 
-    @OneToOne
+    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST)
     private UserAppRole userAppRole;
 
     @OneToMany(mappedBy = "sentTo", cascade = CascadeType.PERSIST)
