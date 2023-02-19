@@ -20,10 +20,10 @@ public class User {
     @SequenceGenerator(name = "USER_SEQUENCE")
     private Long id;
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, unique = true)
     private String password;
 
     @Column(name = "first_name", nullable = false)
@@ -47,6 +47,17 @@ public class User {
     @OneToMany(mappedBy = "sentBy", cascade = CascadeType.PERSIST)
     private List<Message> messagesSentByUser;
 
+    public User() {
+    }
+
+    public User(String username, String password, String firstName, String secondName, LocalDateTime joinedAt) {
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.joinedAt = joinedAt;
+    }
+
     public List<UserMessage> getMessagesSentToUser() {
         return messagesSentToUser;
     }
@@ -61,14 +72,6 @@ public class User {
 
     public void setMessagesSentByUser(List<Message> messagesSentByUser) {
         this.messagesSentByUser = messagesSentByUser;
-    }
-
-    public User(String username, String password, String firstName, String secondName, LocalDateTime joinedAt) {
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.joinedAt = joinedAt;
     }
 
     public Long getId() {

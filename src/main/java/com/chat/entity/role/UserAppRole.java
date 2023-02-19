@@ -20,12 +20,17 @@ public class UserAppRole {
             name = "user_id",
             foreignKey = @ForeignKey(name = "USER_APP_ROLE_USER_ID_USER_ID"),
             nullable = false,
-            referencedColumnName = "id"
+            referencedColumnName = "id",
+            unique = true
     )
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_app_role_type", nullable = false, length = 20)
     private UserAppRoleType userAppRoleType;
+
+    public UserAppRole() {
+    }
 
     public UserAppRole(User user, UserAppRoleType userAppRoleType) {
         this.user = user;
@@ -73,7 +78,6 @@ public class UserAppRole {
     public String toString() {
         return "UserAppRole{" +
                 "id=" + id +
-                ", user=" + user +
                 ", userAppRoleType=" + userAppRoleType +
                 '}';
     }

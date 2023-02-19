@@ -1,5 +1,9 @@
 package com.chat.config;
 
+import com.chat.service.core.message.receiver.MessageReceiverService;
+import com.chat.service.core.message.sender.MessageSenderService;
+import com.chat.service.impl.message.receiver.MessageReceiverServiceWebSocketImpl;
+import com.chat.service.impl.message.sender.MessageSenderServiceWebSocketImpl;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
@@ -10,6 +14,9 @@ import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -44,4 +51,21 @@ public class Config {
     public Destination messageTopic() {
         return new ActiveMQTopic("message.topic");
     }
+
+    @Bean
+    public MessageSenderService messageSenderService(SimpMessagingTemplate simpMessagingTemplate) {
+        return new MessageSenderServiceWebSocketImpl(simpMessagingTemplate);
+    }
+
+    @Bean
+    public MessageReceiverService messageReceiverService() {
+        return new MessageReceiverServiceWebSocketImpl();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
 }

@@ -7,8 +7,10 @@ import com.chat.service.core.user.UserAppRoleService;
 import com.chat.service.core.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+@Service
 public class UserAppRoleServiceImpl implements UserAppRoleService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserAppRoleServiceImpl.class);

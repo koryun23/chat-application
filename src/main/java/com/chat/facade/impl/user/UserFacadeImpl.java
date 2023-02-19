@@ -3,7 +3,6 @@ package com.chat.facade.impl.user;
 import com.chat.dto.request.UserRegistrationRequestDto;
 import com.chat.dto.response.UserRegistrationResponseDto;
 import com.chat.entity.role.UserAppRole;
-import com.chat.entity.role.type.UserAppRoleType;
 import com.chat.entity.user.User;
 import com.chat.facade.core.user.UserFacade;
 import com.chat.service.core.user.UserAppRoleCreationParams;
@@ -16,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component
 public class UserFacadeImpl implements UserFacade {
@@ -33,6 +34,17 @@ public class UserFacadeImpl implements UserFacade {
     public UserRegistrationResponseDto register(UserRegistrationRequestDto requestDto) {
         LOGGER.info("Registering a user according to the user registration request dto - {}", requestDto);
         Assert.notNull(requestDto, "User registration request dto should not be null");
+
+        List<String> errors = new LinkedList<>();
+
+        if(userWithUsernameExists(requestDto.getUsername())) {
+            errors.add("Cannot register since the username is already taken");
+        }
+
+        if(errorsFound(errors)) {
+            return new UserRegistrationResponseDto(errors);
+        }
+
         User user = userService.create(new UserCreationParams(
                 requestDto.getUsername(),
                 requestDto.getPassword(),
@@ -55,5 +67,13 @@ public class UserFacadeImpl implements UserFacade {
         );
         LOGGER.info("Successfully registered a user according to the user registration request dto - {}, result - {}", requestDto, responseDto);
         return responseDto;
+    }
+
+    private boolean errorsFound(List<String> errors) {
+        return errors.size() != 0;
+    }
+
+    private boolean userWithUsernameExists(String username) {
+        return userService.findByUsername(username).isPresent();
     }
 }

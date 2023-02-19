@@ -1,6 +1,7 @@
 package com.chat.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class SendPublicMessageResponseDto {
@@ -10,6 +11,8 @@ public class SendPublicMessageResponseDto {
     private String chat;
     private LocalDateTime sentAt;
 
+    private List<String> errors;
+
     public SendPublicMessageResponseDto() {
     }
 
@@ -18,6 +21,10 @@ public class SendPublicMessageResponseDto {
         this.sentBy = sentBy;
         this.chat = chat;
         this.sentAt = sentAt;
+    }
+
+    public SendPublicMessageResponseDto(List<String> errors) {
+        this.errors = errors;
     }
 
     public String getMessage() {
@@ -52,17 +59,25 @@ public class SendPublicMessageResponseDto {
         this.sentAt = sentAt;
     }
 
+    public List<String> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SendPublicMessageResponseDto that = (SendPublicMessageResponseDto) o;
-        return Objects.equals(message, that.message) && Objects.equals(sentBy, that.sentBy) && Objects.equals(chat, that.chat) && Objects.equals(sentAt, that.sentAt);
+        return Objects.equals(message, that.message) && Objects.equals(sentBy, that.sentBy) && Objects.equals(chat, that.chat) && Objects.equals(sentAt, that.sentAt) && Objects.equals(errors, that.errors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(message, sentBy, chat, sentAt);
+        return Objects.hash(message, sentBy, chat, sentAt, errors);
     }
 
     @Override
@@ -72,6 +87,7 @@ public class SendPublicMessageResponseDto {
                 ", sentBy='" + sentBy + '\'' +
                 ", chat='" + chat + '\'' +
                 ", sentAt=" + sentAt +
+                ", errors=" + errors +
                 '}';
     }
 }

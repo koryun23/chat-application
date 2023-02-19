@@ -2,14 +2,17 @@ package com.chat.controller;
 
 import com.chat.dto.request.UserRegistrationRequestDto;
 import com.chat.dto.response.UserRegistrationResponseDto;
+import com.chat.entity.role.type.UserAppRoleType;
 import com.chat.facade.core.user.UserFacade;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping(path = "join")
+@RestController
+@RequestMapping(path = "join", consumes = "application/json", produces = "application/json")
 public class RegistrationController {
 
     private final UserFacade userFacade;
@@ -19,7 +22,12 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public UserRegistrationResponseDto register(@RequestBody UserRegistrationRequestDto requestDto) {
-        return userFacade.register(requestDto);
+    public ResponseEntity<UserRegistrationResponseDto> register(@RequestBody UserRegistrationRequestDto requestDto) {
+        requestDto.setUserAppRoleType(UserAppRoleType.USER);
+        UserRegistrationResponseDto responseDto = userFacade.register(requestDto);
+        if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
     }
 }

@@ -7,6 +7,7 @@ import com.chat.service.core.user.UserCreationParams;
 import com.chat.service.core.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -18,9 +19,11 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -30,7 +33,7 @@ public class UserServiceImpl implements UserService {
         Assert.notNull(params, "User Creation Params must not be null");
         User savedUser = userRepository.save(new User(
                 params.getUsername(),
-                params.getPassword(),
+                passwordEncoder.encode(params.getPassword()),
                 params.getFirstName(),
                 params.getSecondName(),
                 params.getJoinedAt()
@@ -46,5 +49,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         LOGGER.info("Successfully retrieved a user with an id of {}, result - {}", id, user);
         return user;
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        LOGGER.info("Retrieving an optional user with a username of {}", username);
+        Assert.notNull(username, "Username should not be null when trying to retrieve a user");
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        LOGGER.info("Successfully retrieved an optional user with a username of {}, result - {}", username, optionalUser);
+        return optionalUser;
     }
 }
