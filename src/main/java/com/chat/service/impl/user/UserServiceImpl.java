@@ -54,9 +54,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByUsername(String username) {
         LOGGER.info("Retrieving an optional user with a username of {}", username);
-        Assert.notNull(username, "Username should not be null when trying to retrieve a user");
+        Assert.notNull(username, "Username should not be null when trying to retrieve an optional user");
         Optional<User> optionalUser = userRepository.findByUsername(username);
         LOGGER.info("Successfully retrieved an optional user with a username of {}, result - {}", username, optionalUser);
         return optionalUser;
+    }
+
+    @Override
+    public User getByUsername(String username) {
+        LOGGER.info("Retrieving a user with a username of {}", username);
+        Assert.notNull(username, "Username should not be null when trying to retrieve a user");
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+        LOGGER.info("Successfully retrieved a user with a username of {}, result - {}", username, user);
+        return user;
     }
 }

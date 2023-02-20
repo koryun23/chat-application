@@ -1,7 +1,8 @@
 package com.chat.service.impl.message.sender;
 
 import com.chat.service.core.message.sender.MessageSenderService;
-import org.apache.activemq.command.ActiveMQQueue;
+import com.chat.service.core.message.sender.PrivateMessageCreationParams;
+import com.chat.service.core.message.sender.PublicMessageCreationParams;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

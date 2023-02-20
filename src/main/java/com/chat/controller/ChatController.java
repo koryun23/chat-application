@@ -1,39 +1,32 @@
 package com.chat.controller;
 
-import com.chat.dto.request.SendPrivateMessageRequestDto;
-import com.chat.dto.request.SendPublicMessageRequestDto;
-import com.chat.dto.response.SendPrivateMessageResponseDto;
-import com.chat.dto.response.SendPublicMessageResponseDto;
-import com.chat.facade.impl.message.MessageFacadeImpl;
+import com.chat.dto.request.ChatCreationRequestDto;
+import com.chat.dto.response.ChatCreationResponseDto;
+import com.chat.facade.core.chat.ChatFacade;
 import io.jsonwebtoken.lang.Assert;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping(path = "app", consumes = "application/json", produces = "application/json")
+@RestController
+@RequestMapping("chat")
 public class ChatController {
 
-    private final MessageFacadeImpl messageFacade;
+    private final ChatFacade chatFacade;
 
-    public ChatController(MessageFacadeImpl messageFacade, SimpMessagingTemplate simpMessagingTemplate) {
-        Assert.notNull(messageFacade, "Message Facade must not be null");
-        this.messageFacade = messageFacade;
+    public ChatController(ChatFacade chatFacade) {
+        this.chatFacade = chatFacade;
     }
 
-    @MessageMapping("/message")
-    @SendTo("/chatroom/public")
-    public SendPublicMessageResponseDto receivePublicMessage(@Payload SendPublicMessageRequestDto requestDto) {
-        // when receiving a public message on the /message mapping, the message is being SENT to the /chatroom/public mapping
-        return messageFacade.sendPublicMessage(requestDto);
-    }
+    @PostMapping(path = "/create")
+    public ResponseEntity<ChatCreationResponseDto> create(@RequestBody ChatCreationRequestDto requestDto) {
+        Assert.notNull(requestDto, "Chat creation request dto must not be null");
 
-    @MessageMapping("/private-message")
-    public SendPrivateMessageResponseDto receivePrivateMessage(@Payload SendPrivateMessageRequestDto requestDto) {
-        // when receiving a private message on the mapping /private-message, it is being SENT to the appropriate user
-        return messageFacade.sendPrivateMessage(requestDto);
+        ChatCreationResponseDto responseDto = chatFacade.createChat(requestDto);
+
+        if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
     }
 }

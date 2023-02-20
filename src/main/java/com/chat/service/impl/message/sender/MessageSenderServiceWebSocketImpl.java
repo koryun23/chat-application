@@ -1,6 +1,8 @@
 package com.chat.service.impl.message.sender;
 
 import com.chat.service.core.message.sender.MessageSenderService;
+import com.chat.service.core.message.sender.PrivateMessageCreationParams;
+import com.chat.service.core.message.sender.PublicMessageCreationParams;
 import io.jsonwebtoken.lang.Assert;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

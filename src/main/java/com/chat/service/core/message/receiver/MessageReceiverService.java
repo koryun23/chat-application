@@ -1,7 +1,7 @@
 package com.chat.service.core.message.receiver;
 
-import com.chat.service.impl.message.sender.PrivateMessageCreationParams;
-import com.chat.service.impl.message.sender.PublicMessageCreationParams;
+import com.chat.service.core.message.sender.PrivateMessageCreationParams;
+import com.chat.service.core.message.sender.PublicMessageCreationParams;
 
 public interface MessageReceiverService {
 
