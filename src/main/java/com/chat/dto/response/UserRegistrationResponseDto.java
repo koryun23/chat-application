@@ -12,7 +12,7 @@ public class UserRegistrationResponseDto {
     private String password;
     private String firstName;
     private String secondName;
-    private UserAppRoleType userAppRoleType;
+    private List<UserAppRoleType> userAppRoleTypes;
     private LocalDateTime registeredAt;
 
     private List<String> errors;
@@ -20,12 +20,12 @@ public class UserRegistrationResponseDto {
     public UserRegistrationResponseDto() {
     }
 
-    public UserRegistrationResponseDto(String username, String password, String firstName, String secondName, UserAppRoleType userAppRoleType, LocalDateTime registeredAt) {
+    public UserRegistrationResponseDto(String username, String password, String firstName, String secondName, List<UserAppRoleType> userAppRoleTypes, LocalDateTime registeredAt) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.secondName = secondName;
-        this.userAppRoleType = userAppRoleType;
+        this.userAppRoleTypes = userAppRoleTypes;
         this.registeredAt = registeredAt;
     }
 
@@ -65,12 +65,12 @@ public class UserRegistrationResponseDto {
         this.secondName = secondName;
     }
 
-    public UserAppRoleType getUserAppRoleType() {
-        return userAppRoleType;
+    public List<UserAppRoleType> getUserAppRoleTypes() {
+        return userAppRoleTypes;
     }
 
-    public void setUserAppRoleType(UserAppRoleType userAppRoleType) {
-        this.userAppRoleType = userAppRoleType;
+    public void setUserAppRoleTypes(List<UserAppRoleType> userAppRoleTypes) {
+        this.userAppRoleTypes = userAppRoleTypes;
     }
 
     public LocalDateTime getRegisteredAt() {
@@ -94,12 +94,12 @@ public class UserRegistrationResponseDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserRegistrationResponseDto that = (UserRegistrationResponseDto) o;
-        return Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(firstName, that.firstName) && Objects.equals(secondName, that.secondName) && userAppRoleType == that.userAppRoleType && Objects.equals(registeredAt, that.registeredAt) && Objects.equals(errors, that.errors);
+        return Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(firstName, that.firstName) && Objects.equals(secondName, that.secondName) && Objects.equals(userAppRoleTypes, that.userAppRoleTypes) && Objects.equals(registeredAt, that.registeredAt) && Objects.equals(errors, that.errors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password, firstName, secondName, userAppRoleType, registeredAt, errors);
+        return Objects.hash(username, password, firstName, secondName, userAppRoleTypes, registeredAt, errors);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class UserRegistrationResponseDto {
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", secondName='" + secondName + '\'' +
-                ", userAppRoleType=" + userAppRoleType +
+                ", userAppRoleTypes=" + userAppRoleTypes +
                 ", registeredAt=" + registeredAt +
                 ", errors=" + errors +
                 '}';

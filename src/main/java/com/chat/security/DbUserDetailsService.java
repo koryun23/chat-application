@@ -30,7 +30,7 @@ public class DbUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 username,
                 dbUser.getPassword(),
-                Stream.of(dbUser.getUserAppRole())
+                dbUser.getUserAppRoles().stream()
                         .map(UserAppRole::getUserAppRoleType)
                         .map(Enum::name)
                         .map(SimpleGrantedAuthority::new)

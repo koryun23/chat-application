@@ -3,6 +3,7 @@ package com.chat.facade.impl.user;
 import com.chat.dto.request.UserRegistrationRequestDto;
 import com.chat.dto.response.UserRegistrationResponseDto;
 import com.chat.entity.role.UserAppRole;
+import com.chat.entity.role.type.UserAppRoleType;
 import com.chat.entity.user.User;
 import com.chat.facade.core.user.UserFacade;
 import com.chat.service.core.user.UserAppRoleCreationParams;
@@ -17,6 +18,7 @@ import org.springframework.util.Assert;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class UserFacadeImpl implements UserFacade {
@@ -53,16 +55,21 @@ public class UserFacadeImpl implements UserFacade {
                 LocalDateTime.now()
         ));
 
-        UserAppRole userAppRole = userAppRoleService.create(new UserAppRoleCreationParams(
-                user.getId(),
-                requestDto.getUserAppRoleType()
-        ));
+        List<UserAppRole> userAppRoles = new LinkedList<>();
+        for(UserAppRoleType userAppRoleType : requestDto.getUserAppRoleTypes()) {
+            userAppRoles.add(userAppRoleService.create(new UserAppRoleCreationParams(
+                    user.getId(),
+                    userAppRoleType
+            )));
+
+        }
+
         UserRegistrationResponseDto responseDto = new UserRegistrationResponseDto(
                 user.getUsername(),
                 user.getPassword(),
                 user.getFirstName(),
                 user.getSecondName(),
-                userAppRole.getUserAppRoleType(),
+                userAppRoles.stream().map(UserAppRole::getUserAppRoleType).collect(Collectors.toList()),
                 user.getJoinedAt()
         );
         LOGGER.info("Successfully registered a user according to the user registration request dto - {}, result - {}", requestDto, responseDto);

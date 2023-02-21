@@ -1,10 +1,61 @@
-create sequence chat_message_sequence start 1 increment 1
-create sequence chat_sequence start 1 increment 1
-create sequence message_sequence start 1 increment 1
-create sequence user_app_role_sequence start 1 increment 1
-create sequence user_group_chat_sequence start 1 increment 1
-create sequence user_message_sequence start 1 increment 1
-create sequence user_sequence start 1 increment 1
+   alter table chat_message
+       drop constraint FK_CHAT_MESSAGE_CHAT_ID_CHAT_ID
+
+    alter table chat_message
+       drop constraint FK_CHAT_MESSAGE_MESSAGE_ID_MESSAGE_ID
+
+    alter table message
+       drop constraint FK_MESSAGE_USER_ID_USER_ID
+
+    alter table user_app_role
+       drop constraint USER_APP_ROLE_USER_ID_USER_ID
+
+    alter table user_chat
+       drop constraint USER_CHAT_CHAT_CHAT_ID
+
+    alter table user_chat
+       drop constraint USER_CHAT_USER_USER_ID
+
+    alter table user_message
+       drop constraint FK_USER_MESSAGE_MESSAGE_ID_MESSAGE_ID
+
+    alter table user_message
+       drop constraint FK_USER_MESSAGE_USER_ID_USER_ID
+
+    drop table if exists chat_message cascade
+
+    drop table if exists chats cascade
+
+    drop table if exists message cascade
+
+    drop table if exists user_app_role cascade
+
+    drop table if exists user_chat cascade
+
+    drop table if exists user_message cascade
+
+    drop table if exists users cascade
+
+    drop sequence if exists chat_message_sequence
+
+    drop sequence if exists chat_sequence
+
+    drop sequence if exists message_sequence
+
+    drop sequence if exists user_app_role_sequence
+
+    drop sequence if exists user_group_chat_sequence
+
+    drop sequence if exists user_message_sequence
+
+    drop sequence if exists user_sequence
+create sequence chat_message_sequence start 1 increment 50
+create sequence chat_sequence start 1 increment 50
+create sequence message_sequence start 1 increment 50
+create sequence user_app_role_sequence start 1 increment 50
+create sequence user_group_chat_sequence start 1 increment 50
+create sequence user_message_sequence start 1 increment 50
+create sequence user_sequence start 1 increment 50
 
     create table chat_message (
        id int8 not null,
@@ -100,6 +151,7 @@ create sequence user_sequence start 1 increment 1
        add constraint USER_CHAT_USER_USER_ID
        foreign key (user_id)
        references users
+
 
     alter table user_message
        add constraint FK_USER_MESSAGE_MESSAGE_ID_MESSAGE_ID

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "join", consumes = "application/json", produces = "application/json")
 public class RegistrationController {
@@ -23,7 +25,7 @@ public class RegistrationController {
 
     @PostMapping
     public ResponseEntity<UserRegistrationResponseDto> register(@RequestBody UserRegistrationRequestDto requestDto) {
-        requestDto.setUserAppRoleType(UserAppRoleType.USER);
+        requestDto.setUserAppRoleTypes(List.of(UserAppRoleType.USER));
         UserRegistrationResponseDto responseDto = userFacade.register(requestDto);
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);

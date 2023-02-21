@@ -15,7 +15,7 @@ public class UserAppRole {
     @SequenceGenerator(name = "USER_APP_ROLE_SEQUENCE")
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(
             name = "user_id",
             foreignKey = @ForeignKey(name = "USER_APP_ROLE_USER_ID_USER_ID"),

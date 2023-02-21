@@ -11,17 +11,17 @@ public class UserRegistrationRequestDto {
     private String password;
     private String firstName;
     private String secondName;
-    private UserAppRoleType userAppRoleType;
+    private List<UserAppRoleType> userAppRoleTypes;
 
     public UserRegistrationRequestDto() {
     }
 
-    public UserRegistrationRequestDto(String username, String password, String firstName, String secondName, UserAppRoleType userAppRoleType) {
+    public UserRegistrationRequestDto(String username, String password, String firstName, String secondName, List<UserAppRoleType> userAppRoleTypes) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.secondName = secondName;
-        this.userAppRoleType = userAppRoleType;
+        this.userAppRoleTypes = userAppRoleTypes;
     }
 
     public String getUsername() {
@@ -56,12 +56,12 @@ public class UserRegistrationRequestDto {
         this.secondName = secondName;
     }
 
-    public UserAppRoleType getUserAppRoleType() {
-        return userAppRoleType;
+    public List<UserAppRoleType> getUserAppRoleTypes() {
+        return userAppRoleTypes;
     }
 
-    public void setUserAppRoleType(UserAppRoleType userAppRoleType) {
-        this.userAppRoleType = userAppRoleType;
+    public void setUserAppRoleTypes(List<UserAppRoleType> userAppRoleTypes) {
+        this.userAppRoleTypes = userAppRoleTypes;
     }
 
     @Override
@@ -69,12 +69,12 @@ public class UserRegistrationRequestDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserRegistrationRequestDto that = (UserRegistrationRequestDto) o;
-        return Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(firstName, that.firstName) && Objects.equals(secondName, that.secondName) && userAppRoleType == that.userAppRoleType;
+        return Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(firstName, that.firstName) && Objects.equals(secondName, that.secondName) && Objects.equals(userAppRoleTypes, that.userAppRoleTypes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password, firstName, secondName, userAppRoleType);
+        return Objects.hash(username, password, firstName, secondName, userAppRoleTypes);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class UserRegistrationRequestDto {
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", secondName='" + secondName + '\'' +
-                ", userAppRoleType=" + userAppRoleType +
+                ", userAppRoleTypes=" + userAppRoleTypes +
                 '}';
     }
 }

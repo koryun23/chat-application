@@ -38,8 +38,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     private List<UserChat> userChats;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST)
-    private UserAppRole userAppRole;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private List<UserAppRole> userAppRoles;
 
     @OneToMany(mappedBy = "sentTo", cascade = CascadeType.PERSIST)
     private List<UserMessage> messagesSentToUser;
@@ -130,12 +130,12 @@ public class User {
         this.userChats = userChats;
     }
 
-    public UserAppRole getUserAppRole() {
-        return userAppRole;
+    public List<UserAppRole> getUserAppRoles() {
+        return userAppRoles;
     }
 
-    public void setUserAppRole(UserAppRole userAppRole) {
-        this.userAppRole = userAppRole;
+    public void setUserAppRoles(List<UserAppRole> userAppRole) {
+        this.userAppRoles = userAppRole;
     }
 
     @Override
@@ -143,12 +143,12 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(secondName, user.secondName) && Objects.equals(joinedAt, user.joinedAt) && Objects.equals(userChats, user.userChats) && Objects.equals(userAppRole, user.userAppRole) && Objects.equals(messagesSentToUser, user.messagesSentToUser) && Objects.equals(messagesSentByUser, user.messagesSentByUser);
+        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(secondName, user.secondName) && Objects.equals(joinedAt, user.joinedAt) && Objects.equals(userChats, user.userChats) && Objects.equals(userAppRoles, user.userAppRoles) && Objects.equals(messagesSentToUser, user.messagesSentToUser) && Objects.equals(messagesSentByUser, user.messagesSentByUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, firstName, secondName, joinedAt, userChats, userAppRole, messagesSentToUser, messagesSentByUser);
+        return Objects.hash(id, username, password, firstName, secondName, joinedAt, userChats, userAppRoles, messagesSentToUser, messagesSentByUser);
     }
 
     @Override
@@ -160,7 +160,6 @@ public class User {
                 ", secondName='" + secondName + '\'' +
                 ", joinedAt=" + joinedAt +
                 ", userChats=" + userChats +
-                ", userAppRole=" + userAppRole +
                 ", messagesSentToUser=" + messagesSentToUser +
                 ", messagesSentByUser=" + messagesSentByUser +
                 '}';
