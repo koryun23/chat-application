@@ -1,6 +1,7 @@
 package com.chat.service.impl.user;
 
 import com.chat.entity.role.UserAppRole;
+import com.chat.entity.role.type.UserAppRoleType;
 import com.chat.repository.UserAppRoleRepository;
 import com.chat.service.core.user.UserAppRoleCreationParams;
 import com.chat.service.core.user.UserAppRoleService;
@@ -9,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserAppRoleServiceImpl implements UserAppRoleService {
@@ -32,5 +36,19 @@ public class UserAppRoleServiceImpl implements UserAppRoleService {
         ));
         LOGGER.info("Successfully created a user app role according to the user app role creation params - {}, result - {}", params, userAppRole);
         return userAppRole;
+    }
+
+    @Override
+    public List<UserAppRoleType> getAppRoleTypesByUsername(String username) {
+        LOGGER.info("Retrieving the app role type of the user with a username of {}", username);
+        Assert.notNull(username, "Username must not be null when trying to retrieve the role type of a user");
+        List<UserAppRoleType> allByUserUsername = userAppRoleRepository.findAllByUserUsername(username).stream()
+                .map(UserAppRole::getUserAppRoleType)
+                .collect(Collectors.toList());
+        LOGGER.info("Successfully retrieved all app role types of the user with a username of {}, result - {}",
+                username,
+                allByUserUsername);
+        return allByUserUsername;
+
     }
 }
