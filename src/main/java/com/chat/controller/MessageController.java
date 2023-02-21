@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping(path = "app", consumes = "application/json", produces = "application/json")
 public class MessageController {
@@ -27,14 +29,14 @@ public class MessageController {
 
     @MessageMapping("/message")
     @SendTo("/chatroom/public")
-    public SendPublicMessageResponseDto receivePublicMessage(@Payload SendPublicMessageRequestDto requestDto) {
+    public SendPublicMessageResponseDto receivePublicMessage(@Payload SendPublicMessageRequestDto requestDto, HttpServletRequest request) {
         // when receiving a public message on the /message mapping, the message is being SENT to the /chatroom/public mapping
-        return messageFacade.sendPublicMessage(requestDto);
+        return messageFacade.sendPublicMessage(requestDto, request);
     }
 
     @MessageMapping("/private-message")
-    public SendPrivateMessageResponseDto receivePrivateMessage(@Payload SendPrivateMessageRequestDto requestDto) {
+    public SendPrivateMessageResponseDto receivePrivateMessage(@Payload SendPrivateMessageRequestDto requestDto, HttpServletRequest request) {
         // when receiving a private message on the mapping /private-message, it is being SENT to the appropriate user
-        return messageFacade.sendPrivateMessage(requestDto);
+        return messageFacade.sendPrivateMessage(requestDto, request);
     }
 }
