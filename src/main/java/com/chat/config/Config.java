@@ -1,5 +1,8 @@
 package com.chat.config;
 
+import com.chat.repository.ChatMessageRepository;
+import com.chat.repository.MessageRepository;
+import com.chat.repository.UserMessageRepository;
 import com.chat.service.core.message.receiver.MessageReceiverService;
 import com.chat.service.core.message.sender.MessageSenderService;
 import com.chat.service.impl.message.receiver.MessageReceiverServiceWebSocketImpl;

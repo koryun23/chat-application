@@ -1,5 +1,8 @@
 package com.chat.service.impl.message.sender;
 
+import com.chat.repository.ChatMessageRepository;
+import com.chat.repository.MessageRepository;
+import com.chat.repository.UserMessageRepository;
 import com.chat.service.core.message.sender.MessageSenderService;
 import com.chat.service.core.message.sender.PrivateMessageCreationParams;
 import com.chat.service.core.message.sender.PublicMessageCreationParams;
@@ -22,7 +25,6 @@ public class MessageSenderServiceWebSocketImpl implements MessageSenderService {
     @Override
     public void sendPrivateMessage(PrivateMessageCreationParams messageCreationParams) {
         simpMessagingTemplate.convertAndSendToUser(messageCreationParams.getSentTo(), "/private", messageCreationParams);
-
     }
 
     @Transactional
