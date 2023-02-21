@@ -1,13 +1,12 @@
 package com.chat.service.impl.chat;
 
 import com.chat.entity.chat.Chat;
-import com.chat.entity.chat.UserChat;
 import com.chat.exceptions.ChatNotFoundException;
+import com.chat.mapper.core.chat.ChatCreationParamsToChatMapper;
 import com.chat.repository.ChatRepository;
 import com.chat.repository.UserChatRepository;
 import com.chat.service.core.chat.ChatCreationParams;
 import com.chat.service.core.chat.ChatService;
-import com.chat.service.core.chat.UserChatCreationParams;
 import com.chat.service.core.user.UserService;
 import io.jsonwebtoken.lang.Assert;
 import org.slf4j.Logger;
@@ -21,12 +20,15 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final UserChatRepository userChatRepository;
     private final UserService userService;
+    private final ChatCreationParamsToChatMapper chatCreationParamsToChatMapper;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ChatServiceImpl.class);
 
-    public ChatServiceImpl(ChatRepository chatRepository, UserChatRepository userChatRepository, UserService userService) {
+    public ChatServiceImpl(ChatRepository chatRepository, UserChatRepository userChatRepository, UserService userService, ChatCreationParamsToChatMapper chatCreationParamsToChatMapper) {
         this.chatRepository = chatRepository;
         this.userChatRepository = userChatRepository;
         this.userService = userService;
+        this.chatCreationParamsToChatMapper = chatCreationParamsToChatMapper;
     }
 
     @Transactional
@@ -34,11 +36,7 @@ public class ChatServiceImpl implements ChatService {
     public Chat createChat(ChatCreationParams params) {
         LOGGER.info("Creating a chat according to Chat creation params - {}", params);
         Assert.notNull(params, "Chat creation params must not be null");
-        Chat savedChat = chatRepository.save(new Chat(
-                params.getName(),
-                params.getCreatedAt(),
-                params.getChatType()
-        ));
+        Chat savedChat = chatRepository.save(chatCreationParamsToChatMapper.apply(params));
         LOGGER.info("Successfully created a chat according to the chat creation params - {}, result - {}", params, savedChat);
         return savedChat;
     }

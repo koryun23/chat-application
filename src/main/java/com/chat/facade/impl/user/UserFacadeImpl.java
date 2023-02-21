@@ -6,6 +6,7 @@ import com.chat.entity.role.UserAppRole;
 import com.chat.entity.role.type.UserAppRoleType;
 import com.chat.entity.user.User;
 import com.chat.facade.core.user.UserFacade;
+import com.chat.mapper.core.user.UserRegistrationRequestDtoToUserCreationParamsMapper;
 import com.chat.service.core.user.UserAppRoleCreationParams;
 import com.chat.service.core.user.UserAppRoleService;
 import com.chat.service.core.user.UserCreationParams;
@@ -26,10 +27,12 @@ public class UserFacadeImpl implements UserFacade {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserFacadeImpl.class);
     private final UserService userService;
     private final UserAppRoleService userAppRoleService;
+    private final UserRegistrationRequestDtoToUserCreationParamsMapper userRegistrationRequestDtoToUserCreationParamsMapper;
 
-    public UserFacadeImpl(UserService userService, UserAppRoleService userAppRoleService) {
+    public UserFacadeImpl(UserService userService, UserAppRoleService userAppRoleService, UserRegistrationRequestDtoToUserCreationParamsMapper userRegistrationRequestDtoToUserCreationParamsMapper) {
         this.userService = userService;
         this.userAppRoleService = userAppRoleService;
+        this.userRegistrationRequestDtoToUserCreationParamsMapper = userRegistrationRequestDtoToUserCreationParamsMapper;
     }
 
     @Override
@@ -47,13 +50,7 @@ public class UserFacadeImpl implements UserFacade {
             return new UserRegistrationResponseDto(errors);
         }
 
-        User user = userService.create(new UserCreationParams(
-                requestDto.getUsername(),
-                requestDto.getPassword(),
-                requestDto.getFirstName(),
-                requestDto.getSecondName(),
-                LocalDateTime.now()
-        ));
+        User user = userService.create(userRegistrationRequestDtoToUserCreationParamsMapper.apply(requestDto));
 
         List<UserAppRole> userAppRoles = new LinkedList<>();
         for(UserAppRoleType userAppRoleType : requestDto.getUserAppRoleTypes()) {

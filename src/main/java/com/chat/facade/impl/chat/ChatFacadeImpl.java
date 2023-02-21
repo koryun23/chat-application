@@ -7,6 +7,7 @@ import com.chat.entity.chat.UserChat;
 import com.chat.entity.chat.type.ChatType;
 import com.chat.entity.role.type.UserChatRoleType;
 import com.chat.facade.core.chat.ChatFacade;
+import com.chat.mapper.core.chat.ChatCreationRequestDtoToChatCreationParamsMapper;
 import com.chat.service.core.chat.ChatCreationParams;
 import com.chat.service.core.chat.ChatService;
 import com.chat.service.core.chat.UserChatCreationParams;
@@ -28,11 +29,13 @@ public class ChatFacadeImpl implements ChatFacade {
     private final ChatService chatService;
     private final UserChatService userChatService;
     private final UserService userService;
+    private final ChatCreationRequestDtoToChatCreationParamsMapper chatCreationRequestDtoToChatCreationParamsMapper;
 
-    public ChatFacadeImpl(ChatService chatService, UserChatService userChatService, UserService userService) {
+    public ChatFacadeImpl(ChatService chatService, UserChatService userChatService, UserService userService, ChatCreationRequestDtoToChatCreationParamsMapper chatCreationRequestDtoToChatCreationParamsMapper) {
         this.chatService = chatService;
         this.userChatService = userChatService;
         this.userService = userService;
+        this.chatCreationRequestDtoToChatCreationParamsMapper = chatCreationRequestDtoToChatCreationParamsMapper;
     }
 
     @Override
@@ -50,11 +53,7 @@ public class ChatFacadeImpl implements ChatFacade {
             return new ChatCreationResponseDto(errors);
         }
 
-        Chat chat = chatService.createChat(new ChatCreationParams(
-                requestDto.getName(),
-                requestDto.getChatType(),
-                LocalDateTime.now()
-        ));
+        Chat chat = chatService.createChat(chatCreationRequestDtoToChatCreationParamsMapper.apply(requestDto));
 
         UserChatRoleType userChatRoleType = detectUserChatRole(requestDto.getChatType());
 

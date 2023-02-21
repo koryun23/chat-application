@@ -2,6 +2,7 @@ package com.chat.service.impl.user;
 
 import com.chat.entity.user.User;
 import com.chat.exceptions.UserNotFoundException;
+import com.chat.mapper.core.user.UserCreationParamsToUserMapper;
 import com.chat.repository.UserRepository;
 import com.chat.service.core.user.UserCreationParams;
 import com.chat.service.core.user.UserService;
@@ -20,10 +21,12 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserCreationParamsToUserMapper userCreationParamsToUserMapper;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserCreationParamsToUserMapper userCreationParamsToUserMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userCreationParamsToUserMapper = userCreationParamsToUserMapper;
     }
 
     @Transactional
@@ -31,13 +34,7 @@ public class UserServiceImpl implements UserService {
     public User create(UserCreationParams params) {
         LOGGER.info("Creating a user according to the User Creation Params - {}", params);
         Assert.notNull(params, "User Creation Params must not be null");
-        User savedUser = userRepository.save(new User(
-                params.getUsername(),
-                passwordEncoder.encode(params.getPassword()),
-                params.getFirstName(),
-                params.getSecondName(),
-                params.getJoinedAt()
-        ));
+        User savedUser = userRepository.save(userCreationParamsToUserMapper.apply(params));
         LOGGER.info("Successfully created a new user according to the user creation params - {}, result - {}", params, savedUser);
         return savedUser;
     }
