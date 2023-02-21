@@ -4,7 +4,9 @@ import com.chat.entity.user.User;
 import com.chat.mapper.core.user.UserCreationParamsToUserMapper;
 import com.chat.service.core.user.UserCreationParams;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserCreationParamsToUserMapperImpl implements UserCreationParamsToUserMapper {
 
     private final PasswordEncoder passwordEncoder;
