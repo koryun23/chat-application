@@ -6,6 +6,8 @@ import com.chat.dto.response.SendPrivateMessageResponseDto;
 import com.chat.dto.response.SendPublicMessageResponseDto;
 import com.chat.facade.core.message.MessageFacade;
 import com.chat.service.core.jwt.JwtService;
+import com.chat.service.core.message.persist.MessageCreationParams;
+import com.chat.service.core.message.persist.MessagePersistenceService;
 import com.chat.service.core.message.receiver.MessageReceiverService;
 import com.chat.service.core.message.sender.MessageSenderService;
 import com.chat.service.core.message.sender.PrivateMessageCreationParams;
@@ -18,23 +20,25 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.http.HttpRequest;
 import java.time.LocalDateTime;
 
 @Component
 public class MessageFacadeImpl implements MessageFacade {
 
+    private final MessagePersistenceService messagePersistenceService;
     private final MessageSenderService messageSenderService;
     private final MessageReceiverService messageReceiverService;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final JwtService jwtService;
     private final Logger LOGGER = LoggerFactory.getLogger(MessageFacadeImpl.class);
 
-    public MessageFacadeImpl(MessageSenderService messageSenderService, MessageReceiverService messageReceiverService, SimpMessagingTemplate simpMessagingTemplate, JwtService jwtService) {
+    public MessageFacadeImpl(MessagePersistenceService messagePersistenceService, MessageSenderService messageSenderService, MessageReceiverService messageReceiverService, SimpMessagingTemplate simpMessagingTemplate, JwtService jwtService) {
+        Assert.notNull(messagePersistenceService, "Message Persistence Service must not be null");
         Assert.notNull(messageReceiverService, "Message Receiver Service must not be null");
         Assert.notNull(messageSenderService, "Message Sender Service must not be null");
         Assert.notNull(simpMessagingTemplate, "Simple Messaging Template must not be null");
         Assert.notNull(jwtService, "Jwt Service must not be null");
+        this.messagePersistenceService = messagePersistenceService;
         this.messageSenderService = messageSenderService;
         this.messageReceiverService = messageReceiverService;
         this.simpMessagingTemplate = simpMessagingTemplate;
@@ -51,6 +55,11 @@ public class MessageFacadeImpl implements MessageFacade {
                 requestDto.getMessage(),
                 requestDto.getSentTo(),
                 requestDto.getSentBy(),
+                LocalDateTime.now()
+        ));
+
+        messagePersistenceService.create(new MessageCreationParams(
+                requestDto.getMessage(),
                 LocalDateTime.now()
         ));
 
@@ -75,6 +84,11 @@ public class MessageFacadeImpl implements MessageFacade {
                 requestDto.getMessage(),
                 requestDto.getChat(),
                 requestDto.getSentBy()
+        ));
+
+        messagePersistenceService.create(new MessageCreationParams(
+                requestDto.getMessage(),
+                LocalDateTime.now()
         ));
 
         SendPublicMessageResponseDto responseDto = new SendPublicMessageResponseDto(
