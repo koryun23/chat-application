@@ -20,8 +20,7 @@ public class UserAppRole {
             name = "user_id",
             foreignKey = @ForeignKey(name = "USER_APP_ROLE_USER_ID_USER_ID"),
             nullable = false,
-            referencedColumnName = "id",
-            unique = true
+            referencedColumnName = "id"
     )
     private User user;
 

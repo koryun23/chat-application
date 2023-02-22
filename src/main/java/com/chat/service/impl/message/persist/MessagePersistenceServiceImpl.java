@@ -34,6 +34,7 @@ public class MessagePersistenceServiceImpl implements MessagePersistenceService 
         return message;
     }
 
+    @Transactional
     @Override
     public Message getById(Long id) {
         LOGGER.info("Retrieving a message having an id of {}", id);

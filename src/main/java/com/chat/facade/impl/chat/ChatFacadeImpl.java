@@ -83,6 +83,6 @@ public class ChatFacadeImpl implements ChatFacade {
     }
 
     private UserChatRoleType detectUserChatRole(ChatType chatType) {
-        return chatType == ChatType.GROUP ? UserChatRoleType.OWNER : UserChatRoleType.USER;
+        return chatType == ChatType.GROUP ? UserChatRoleType.CHAT_OWNER : UserChatRoleType.CHAT_USER;
     }
 }

@@ -1,7 +1,7 @@
 package com.chat.entity.role.type;
 
 public enum UserChatRoleType {
-    OWNER,
-    ADMIN,
-    USER
+    CHAT_OWNER,
+    CHAT_ADMIN,
+    CHAT_USER
 }

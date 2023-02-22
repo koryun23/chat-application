@@ -113,9 +113,6 @@ create sequence user_sequence start 1 increment 50
         primary key (id)
     )
 
-    alter table user_app_role
-       add constraint UK_kspiomjr2bpobqc8puej8xg65 unique (user_id)
-
     alter table users
        add constraint UK_r53o2ojjw4fikudfnsuuga336 unique (password)
 

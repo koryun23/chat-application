@@ -6,13 +6,14 @@ import com.chat.service.core.user.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -20,35 +21,35 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
     private final UserService userService;
     private final UserAppRoleService userAppRoleService;
-    private final JwtTokenValidationFilter jwtTokenValidationFilter;
-    private final AuthenticationFilter authenticationFilter;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(JwtService jwtService, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, UserService userService, UserAppRoleService userAppRoleService, JwtTokenValidationFilter jwtTokenValidationFilter, AuthenticationFilter authenticationFilter) {
-        this.jwtService = jwtService;
+    public SecurityConfig(UserDetailsService userDetailsService, UserService userService, UserAppRoleService userAppRoleService, JwtService jwtService, PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.userAppRoleService = userAppRoleService;
-        this.jwtTokenValidationFilter = jwtTokenValidationFilter;
-        this.authenticationFilter = authenticationFilter;
+        this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
     }
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager(), userService, userAppRoleService, jwtService);
+        JwtTokenValidationFilter jwtTokenValidationFilter = new JwtTokenValidationFilter(jwtService);
         http.csrf().disable().cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(authenticationFilter)
-                .addFilterAfter(jwtTokenValidationFilter, AuthenticationFilter.class)
+                .addFilter(jwtAuthenticationFilter)
+                .addFilterAfter(jwtTokenValidationFilter, JwtAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/join").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth").permitAll()
                 .anyRequest()
                 .authenticated();
     }
@@ -57,6 +58,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
+
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
+
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {

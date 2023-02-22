@@ -1,6 +1,6 @@
 package com.chat.entity.role.type;
 
 public enum UserAppRoleType {
-    USER,
-    SUPERADMIN
+    APP_USER,
+    APP_SUPERADMIN
 }

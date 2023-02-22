@@ -25,7 +25,7 @@ public class RegistrationController {
 
     @PostMapping
     public ResponseEntity<UserRegistrationResponseDto> register(@RequestBody UserRegistrationRequestDto requestDto) {
-        requestDto.setUserAppRoleTypes(List.of(UserAppRoleType.USER));
+        requestDto.setUserAppRoleTypes(List.of(UserAppRoleType.APP_USER));
         UserRegistrationResponseDto responseDto = userFacade.register(requestDto);
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);

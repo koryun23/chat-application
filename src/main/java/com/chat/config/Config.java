@@ -3,8 +3,13 @@ package com.chat.config;
 import com.chat.repository.ChatMessageRepository;
 import com.chat.repository.MessageRepository;
 import com.chat.repository.UserMessageRepository;
+import com.chat.security.JwtAuthenticationFilter;
+import com.chat.security.JwtTokenValidationFilter;
+import com.chat.service.core.jwt.JwtService;
 import com.chat.service.core.message.receiver.MessageReceiverService;
 import com.chat.service.core.message.sender.MessageSenderService;
+import com.chat.service.core.user.UserAppRoleService;
+import com.chat.service.core.user.UserService;
 import com.chat.service.impl.message.receiver.MessageReceiverServiceWebSocketImpl;
 import com.chat.service.impl.message.sender.MessageSenderServiceWebSocketImpl;
 import org.apache.activemq.command.ActiveMQQueue;
@@ -12,12 +17,18 @@ import org.apache.activemq.command.ActiveMQTopic;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationManagerResolver;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.authentication.AuthenticationManagerBeanDefinitionParser;
+import org.springframework.security.config.authentication.AuthenticationManagerFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -69,6 +80,4 @@ public class Config {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }

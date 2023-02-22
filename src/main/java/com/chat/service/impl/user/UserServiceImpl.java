@@ -39,6 +39,7 @@ public class UserServiceImpl implements UserService {
         return savedUser;
     }
 
+    @Transactional
     @Override
     public User getById(Long id) {
         LOGGER.info("Retrieving a user with an id of {}", id);
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Transactional
     @Override
     public Optional<User> findByUsername(String username) {
         LOGGER.info("Retrieving an optional user with a username of {}", username);
@@ -57,6 +59,7 @@ public class UserServiceImpl implements UserService {
         return optionalUser;
     }
 
+    @Transactional
     @Override
     public User getByUsername(String username) {
         LOGGER.info("Retrieving a user with a username of {}", username);

@@ -9,6 +9,7 @@ import com.chat.service.core.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class UserAppRoleServiceImpl implements UserAppRoleService {
         this.userService = userService;
     }
 
+    @Transactional
     @Override
     public UserAppRole create(UserAppRoleCreationParams params) {
         LOGGER.info("Creating a User App Role according to the user app role creation params - {}", params);
@@ -38,6 +40,7 @@ public class UserAppRoleServiceImpl implements UserAppRoleService {
         return userAppRole;
     }
 
+    @Transactional
     @Override
     public List<UserAppRoleType> getAppRoleTypesByUsername(String username) {
         LOGGER.info("Retrieving the app role type of the user with a username of {}", username);

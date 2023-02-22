@@ -9,6 +9,7 @@ import com.chat.service.core.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 @Service
@@ -26,6 +27,7 @@ public class UserMessagePersistenceServiceImpl implements UserMessagePersistence
         this.messagePersistenceService = messagePersistenceService;
     }
 
+    @Transactional
     @Override
     public UserMessage create(UserMessageCreationParams params) {
         LOGGER.info("Creating a User Message according to the User Message Creation Params - {}", params);

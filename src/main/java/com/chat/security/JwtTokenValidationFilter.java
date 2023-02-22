@@ -1,6 +1,7 @@
 package com.chat.security;
 
 import com.chat.service.core.jwt.JwtService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
 public class JwtTokenValidationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
