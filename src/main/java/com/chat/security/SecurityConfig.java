@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -27,14 +28,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
     private final UserAppRoleService userAppRoleService;
     private final JwtTokenValidationFilter jwtTokenValidationFilter;
+    private final AuthenticationFilter authenticationFilter;
 
-    public SecurityConfig(JwtService jwtService, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, UserService userService, UserAppRoleService userAppRoleService, JwtTokenValidationFilter jwtTokenValidationFilter) {
+    public SecurityConfig(JwtService jwtService, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, UserService userService, UserAppRoleService userAppRoleService, JwtTokenValidationFilter jwtTokenValidationFilter, AuthenticationFilter authenticationFilter) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.userAppRoleService = userAppRoleService;
         this.jwtTokenValidationFilter = jwtTokenValidationFilter;
+        this.authenticationFilter = authenticationFilter;
     }
 
 
@@ -43,7 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(jwtTokenValidationFilter)
+                .addFilter(authenticationFilter)
+                .addFilterAfter(jwtTokenValidationFilter, AuthenticationFilter.class)
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated();
