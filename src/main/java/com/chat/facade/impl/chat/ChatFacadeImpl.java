@@ -1,11 +1,16 @@
 package com.chat.facade.impl.chat;
 
 import com.chat.dto.request.ChatCreationRequestDto;
+import com.chat.dto.request.ChatDeletionRequestDto;
 import com.chat.dto.response.ChatCreationResponseDto;
+import com.chat.dto.response.ChatDeletionResponseDto;
 import com.chat.entity.chat.Chat;
 import com.chat.entity.chat.UserChat;
 import com.chat.entity.chat.type.ChatType;
+import com.chat.entity.role.UserAppRole;
+import com.chat.entity.role.type.UserAppRoleType;
 import com.chat.entity.role.type.UserChatRoleType;
+import com.chat.entity.user.User;
 import com.chat.facade.core.chat.ChatFacade;
 import com.chat.mapper.core.chat.ChatCreationRequestDtoToChatCreationParamsMapper;
 import com.chat.service.core.chat.ChatCreationParams;
@@ -13,6 +18,7 @@ import com.chat.service.core.chat.ChatService;
 import com.chat.service.core.chat.UserChatCreationParams;
 import com.chat.service.core.chat.UserChatService;
 import com.chat.service.core.user.UserService;
+import net.bytebuddy.dynamic.scaffold.MethodGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -21,6 +27,7 @@ import org.springframework.util.Assert;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ChatFacadeImpl implements ChatFacade {
@@ -43,14 +50,8 @@ public class ChatFacadeImpl implements ChatFacade {
         LOGGER.info("Creating a chat according to the chat creation request dto - {}", requestDto);
         Assert.notNull(requestDto, "Chat creation request dto must not be null");
 
-        List<String> errors = new LinkedList<>();
-
         if (userWithUsernameDoesNotExist(requestDto.getCreatorUsername())) {
-            errors.add("No user is registered with a username of " + requestDto.getCreatorUsername());
-        }
-
-        if (errorsFound(errors)) {
-            return new ChatCreationResponseDto(errors);
+            return new ChatCreationResponseDto(List.of("No user is registered with a username of " + requestDto.getCreatorUsername()));
         }
 
         Chat chat = chatService.createChat(chatCreationRequestDtoToChatCreationParamsMapper.apply(requestDto));
@@ -74,15 +75,53 @@ public class ChatFacadeImpl implements ChatFacade {
         return responseDto;
     }
 
+    @Override
+    public ChatDeletionResponseDto deleteChat(ChatDeletionRequestDto requestDto) {
+        LOGGER.info("Deleting a chat according to the chat deletion request dto - {}", requestDto);
+        Assert.notNull(requestDto, "Chat deletion request dto must not be null");
+
+        Long chatId = requestDto.getChatId();
+        String deleterUsername = requestDto.getChatDeleterUsername();
+
+        if(chatWithIdDoesNotExist(chatId)) {
+            return new ChatDeletionResponseDto(List.of(String.format("Chat with a requested id(%s) does not exist, hence cannot be deleted", chatId)));
+        }
+
+        if(chatDeleterIsEligibleToDeleteChatWithId(deleterUsername, chatId)) {
+            return new ChatDeletionResponseDto(List.of(String.format("User '%s' is not eligible to delete the selected chat", deleterUsername)));
+        }
+
+        chatService.delete(chatId);
+        ChatDeletionResponseDto responseDto = new ChatDeletionResponseDto(chatId);
+
+        LOGGER.info("Successfully deleted a chat according to the Chat Deletion Request Dto - {}, result - {}", requestDto, responseDto);
+        return responseDto;
+    }
+
     private boolean userWithUsernameDoesNotExist(String username) {
         return userService.findByUsername(username).isEmpty();
     }
 
-    private boolean errorsFound(List<String> errors) {
-        return errors.size() != 0;
-    }
-
     private UserChatRoleType detectUserChatRole(ChatType chatType) {
         return chatType == ChatType.GROUP ? UserChatRoleType.CHAT_OWNER : UserChatRoleType.CHAT_USER;
+    }
+
+    private boolean chatWithIdDoesNotExist(Long id) {
+        return chatService.findById(id).isEmpty();
+    }
+
+    private boolean chatDeleterIsEligibleToDeleteChatWithId(String deleterUsername, Long chatId) {
+        for(UserChat userChat : usersInChatWithId(chatId)) {
+            User user = userChat.getUser();
+            if((user.getUsername().equals(deleterUsername) && userChat.getUserChatRoleType() == UserChatRoleType.CHAT_OWNER) ||
+                    user.getUserAppRoles().stream().map(UserAppRole::getUserAppRoleType).collect(Collectors.toList()).contains(UserAppRoleType.APP_SUPERADMIN)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<UserChat> usersInChatWithId(Long chatId) {
+        return chatService.getById(chatId).getUsersInChat();
     }
 }
