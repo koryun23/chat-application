@@ -1,6 +1,10 @@
 package com.chat.controller;
 
+import com.chat.dto.request.UserChatCreationRequestDto;
+import com.chat.dto.request.UserChatRetrievalRequestDto;
 import com.chat.dto.request.UserChatUpdateRequestDto;
+import com.chat.dto.response.UserChatCreationResponseDto;
+import com.chat.dto.response.UserChatRetrievalResponseDto;
 import com.chat.dto.response.UserChatUpdateResponseDto;
 import com.chat.facade.core.chat.ChatFacade;
 import com.chat.handler.HttpServletRequestHandler;
@@ -34,4 +38,27 @@ public class UserChatController {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    @PostMapping(path = "/create")
+    public ResponseEntity<UserChatCreationResponseDto> createUserChat(@RequestBody UserChatCreationRequestDto requestDto, HttpServletRequest request) {
+        requestDto.setCreatorUsername(httpServletRequestHandler.extractUsername(request));
+        UserChatCreationResponseDto responseDto = chatFacade.createUserChat(requestDto);
+
+        if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<UserChatRetrievalResponseDto> getUsersInChat(@RequestBody UserChatRetrievalRequestDto requestDto, HttpServletRequest request) {
+        requestDto.setRequestingUsername(httpServletRequestHandler.extractUsername(request));
+        UserChatRetrievalResponseDto responseDto = chatFacade.retrieveUsersInChat(requestDto);
+
+        if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+    }
 }
+

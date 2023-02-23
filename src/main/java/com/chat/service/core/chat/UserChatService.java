@@ -3,6 +3,7 @@ package com.chat.service.core.chat;
 import com.chat.entity.chat.Chat;
 import com.chat.entity.chat.UserChat;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserChatService {
@@ -14,4 +15,6 @@ public interface UserChatService {
     UserChat getById(Long id);
 
     Optional<UserChat> findById(Long id);
+
+    List<UserChat> getAll(Long chatId);
 }

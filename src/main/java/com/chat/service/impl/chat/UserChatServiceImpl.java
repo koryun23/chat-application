@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,7 +57,7 @@ public class UserChatServiceImpl implements UserChatService {
         );
         userChat.setId(existingUserChat.getId());
 
-        UserChat updatedUserChat = userChatRepository.update(userChat);
+        UserChat updatedUserChat = userChatRepository.save(userChat);
 
         LOGGER.info("Successfully updated an existing UserChat - {}, according to the UserChatUpdateParams - {}, result - {}", existingUserChat, params, updatedUserChat);
 
@@ -81,5 +82,14 @@ public class UserChatServiceImpl implements UserChatService {
         Optional<UserChat> userChatOptional = userChatRepository.findById(id);
         LOGGER.info("Successfully retrieved an optional UserChat with an id of {}, result - {}", id, userChatOptional);
         return userChatOptional;
+    }
+
+    @Override
+    public List<UserChat> getAll(Long chatId) {
+        LOGGER.info("Retrieving all users in chat with in id of {}", chatId);
+        Assert.notNull(chatId, "Chat id must not be null");
+        List<UserChat> allUsersInChat = userChatRepository.findAllByChatId(chatId);
+        LOGGER.info("Successfully retrieved all users in chat with an id of {}, result - {}", chatId, allUsersInChat);
+        return allUsersInChat;
     }
 }

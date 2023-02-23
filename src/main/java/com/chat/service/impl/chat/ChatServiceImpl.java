@@ -89,7 +89,7 @@ public class ChatServiceImpl implements ChatService {
                 existingChat.getChatType()
         );
         chat.setId(existingChat.getId());
-        Chat updatedChat = chatRepository.update(chat);
+        Chat updatedChat = chatRepository.save(chat);
 
         LOGGER.info("Successfully updated an existing chat - {}, according to the Chat Update Params - {}, result - {}", existingChat, params, updatedChat);
         return updatedChat;

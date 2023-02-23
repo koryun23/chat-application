@@ -51,9 +51,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/join").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth").permitAll()
                 .antMatchers(HttpMethod.POST, "/chat/create").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/chat/delete/**").hasAnyAuthority("SUPERADMIN", "OWNER")
+                .antMatchers(HttpMethod.PUT, "chat/update/**").hasAnyAuthority("SUPERADMIN", "OWNER", "ADMIN")
+                .antMatchers(HttpMethod.PUT, "user-chat/update/**").hasAnyAuthority("SUPERADMIN", "OWNER", "ADMIN")
+                .antMatchers(HttpMethod.POST, "user-chat/create/**").hasAnyAuthority("SUPERADMIN", "OWNER", "ADMIN")
+                .antMatchers(HttpMethod.GET, "user-chat").permitAll()
                 .antMatchers("/message").permitAll()
                 .antMatchers("/private-message").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/chat/delete/**").hasAnyAuthority("SUPERADMIN", "OWNER")
                 .anyRequest()
                 .authenticated();
     }

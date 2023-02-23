@@ -68,4 +68,13 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Successfully retrieved a user with a username of {}, result - {}", username, user);
         return user;
     }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        LOGGER.info("Retrieving an optional user with an if of {}", id);
+        Assert.notNull(id, "User id must not be null");
+        Optional<User> optionalUser = userRepository.findById(id);
+        LOGGER.info("Successfully retrieved an optional user with an id of {}, result - {}", id, optionalUser);
+        return optionalUser;
+    }
 }
