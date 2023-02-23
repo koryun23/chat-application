@@ -50,6 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/join").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth").permitAll()
+                .antMatchers(HttpMethod.POST, "/create").permitAll()
+                .antMatchers("/message").permitAll()
+                .antMatchers("/private-message").permitAll()
                 .anyRequest()
                 .authenticated();
     }
