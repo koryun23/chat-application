@@ -2,8 +2,10 @@ package com.chat.facade.impl.chat;
 
 import com.chat.dto.request.ChatCreationRequestDto;
 import com.chat.dto.request.ChatDeletionRequestDto;
+import com.chat.dto.request.ChatUpdateRequestDto;
 import com.chat.dto.response.ChatCreationResponseDto;
 import com.chat.dto.response.ChatDeletionResponseDto;
+import com.chat.dto.response.ChatUpdateResponseDto;
 import com.chat.entity.chat.Chat;
 import com.chat.entity.chat.UserChat;
 import com.chat.entity.chat.type.ChatType;
@@ -13,10 +15,7 @@ import com.chat.entity.role.type.UserChatRoleType;
 import com.chat.entity.user.User;
 import com.chat.facade.core.chat.ChatFacade;
 import com.chat.mapper.core.chat.ChatCreationRequestDtoToChatCreationParamsMapper;
-import com.chat.service.core.chat.ChatCreationParams;
-import com.chat.service.core.chat.ChatService;
-import com.chat.service.core.chat.UserChatCreationParams;
-import com.chat.service.core.chat.UserChatService;
+import com.chat.service.core.chat.*;
 import com.chat.service.core.user.UserService;
 import net.bytebuddy.dynamic.scaffold.MethodGraph;
 import org.slf4j.Logger;
@@ -98,6 +97,35 @@ public class ChatFacadeImpl implements ChatFacade {
         return responseDto;
     }
 
+    @Override
+    public ChatUpdateResponseDto updateChat(ChatUpdateRequestDto requestDto) {
+        LOGGER.info("Updating a chat according to the Chat Update Request Dto - {}", requestDto);
+        Assert.notNull(requestDto, "Chat Update Request Dto must not be null");
+
+        Long chatId = requestDto.getChatId();
+        String chatName = requestDto.getName();
+
+        if(chatWithIdDoesNotExist(chatId)) {
+            return new ChatUpdateResponseDto(
+                    List.of(String.format("Chat with an id of %s does not exist", chatId))
+            );
+        }
+
+        Chat updatedChat = chatService.update(new ChatUpdateParams(
+                chatId,
+                chatName
+        ));
+
+        ChatUpdateResponseDto responseDto = new ChatUpdateResponseDto(
+                updatedChat.getId(),
+                updatedChat.getName()
+        );
+
+        LOGGER.info("Successfully updated a chat according to the Chat Update Request Dto - {}, result - {}", requestDto, responseDto);
+        return responseDto;
+
+    }
+
     private boolean userWithUsernameDoesNotExist(String username) {
         return userService.findByUsername(username).isEmpty();
     }
@@ -124,4 +152,6 @@ public class ChatFacadeImpl implements ChatFacade {
     private List<UserChat> usersInChatWithId(Long chatId) {
         return chatService.getById(chatId).getUsersInChat();
     }
+
+
 }

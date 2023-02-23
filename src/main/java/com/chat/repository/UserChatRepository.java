@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserChatRepository extends JpaRepository<UserChat, Long> {
+
+    UserChat update(UserChat userChat);
 }

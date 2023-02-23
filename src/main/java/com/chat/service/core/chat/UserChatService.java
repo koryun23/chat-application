@@ -7,4 +7,7 @@ public interface UserChatService {
 
     UserChat createUserChat(UserChatCreationParams params);
 
+    UserChat updateUserChat(UserChatUpdateParams params);
+
+    UserChat getById(Long id);
 }

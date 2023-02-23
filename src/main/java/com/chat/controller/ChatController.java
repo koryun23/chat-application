@@ -2,8 +2,10 @@ package com.chat.controller;
 
 import com.chat.dto.request.ChatCreationRequestDto;
 import com.chat.dto.request.ChatDeletionRequestDto;
+import com.chat.dto.request.ChatUpdateRequestDto;
 import com.chat.dto.response.ChatCreationResponseDto;
 import com.chat.dto.response.ChatDeletionResponseDto;
+import com.chat.dto.response.ChatUpdateResponseDto;
 import com.chat.facade.core.chat.ChatFacade;
 import com.chat.handler.HttpServletRequestHandler;
 import io.jsonwebtoken.lang.Assert;
@@ -45,6 +47,18 @@ public class ChatController {
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+    }
+
+    @PutMapping(path = "/update/{id}")
+    public ResponseEntity<ChatUpdateResponseDto> update(@PathVariable Long id, ChatUpdateRequestDto requestDto, HttpServletRequest request) {
+        requestDto.setChatId(id);
+        ChatUpdateResponseDto responseDto = chatFacade.updateChat(requestDto);
+
+        if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        }
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
     }
 }

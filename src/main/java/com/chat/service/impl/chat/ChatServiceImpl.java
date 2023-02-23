@@ -1,12 +1,14 @@
 package com.chat.service.impl.chat;
 
 import com.chat.entity.chat.Chat;
+import com.chat.entity.chat.type.ChatType;
 import com.chat.exceptions.ChatNotFoundException;
 import com.chat.mapper.core.chat.ChatCreationParamsToChatMapper;
 import com.chat.repository.ChatRepository;
 import com.chat.repository.UserChatRepository;
 import com.chat.service.core.chat.ChatCreationParams;
 import com.chat.service.core.chat.ChatService;
+import com.chat.service.core.chat.ChatUpdateParams;
 import com.chat.service.core.user.UserService;
 import io.jsonwebtoken.lang.Assert;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -43,6 +46,7 @@ public class ChatServiceImpl implements ChatService {
         return savedChat;
     }
 
+    @Transactional
     @Override
     public Chat getById(Long id) {
         LOGGER.info("Retrieving a chat with an id of {}", id);
@@ -52,6 +56,7 @@ public class ChatServiceImpl implements ChatService {
         return chat;
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         LOGGER.info("Deleting a chat with an id of {}", id);
@@ -60,6 +65,7 @@ public class ChatServiceImpl implements ChatService {
         LOGGER.info("Successfully deleted a chat with an id of {}", id);
     }
 
+    @Transactional
     @Override
     public Optional<Chat> findById(Long id) {
         LOGGER.info("Retrieving an optional chat with an id of {}", id);
@@ -67,6 +73,26 @@ public class ChatServiceImpl implements ChatService {
         Optional<Chat> optionalChat = chatRepository.findById(id);
         LOGGER.info("Successfully retrieved a chat optional with an id of {}, result - {}", id, optionalChat);
         return optionalChat;
+    }
+
+    @Transactional
+    @Override
+    public Chat update(ChatUpdateParams params) {
+        LOGGER.info("Updating chat according to the chat update params - {}", params);
+        Assert.notNull(params, "Chat Update Params must not be null");
+
+        Chat existingChat = getById(params.getId());
+
+        Chat chat = new Chat(
+                params.getName(),
+                existingChat.getCreatedAt(),
+                existingChat.getChatType()
+        );
+        chat.setId(existingChat.getId());
+        Chat updatedChat = chatRepository.update(chat);
+
+        LOGGER.info("Successfully updated an existing chat - {}, according to the Chat Update Params - {}, result - {}", existingChat, params, updatedChat);
+        return updatedChat;
     }
 
 

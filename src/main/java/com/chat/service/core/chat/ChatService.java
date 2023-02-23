@@ -14,4 +14,6 @@ public interface ChatService {
     void delete(Long id);
 
     Optional<Chat> findById(Long id);
+
+    Chat update(ChatUpdateParams params);
 }
