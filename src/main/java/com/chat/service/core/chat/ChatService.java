@@ -16,4 +16,6 @@ public interface ChatService {
     Optional<Chat> findById(Long id);
 
     Chat update(ChatUpdateParams params);
+
+    Chat getByName(String name);
 }

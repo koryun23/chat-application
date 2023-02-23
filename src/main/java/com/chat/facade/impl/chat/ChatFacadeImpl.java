@@ -3,9 +3,11 @@ package com.chat.facade.impl.chat;
 import com.chat.dto.request.ChatCreationRequestDto;
 import com.chat.dto.request.ChatDeletionRequestDto;
 import com.chat.dto.request.ChatUpdateRequestDto;
+import com.chat.dto.request.UserChatUpdateRequestDto;
 import com.chat.dto.response.ChatCreationResponseDto;
 import com.chat.dto.response.ChatDeletionResponseDto;
 import com.chat.dto.response.ChatUpdateResponseDto;
+import com.chat.dto.response.UserChatUpdateResponseDto;
 import com.chat.entity.chat.Chat;
 import com.chat.entity.chat.UserChat;
 import com.chat.entity.chat.type.ChatType;
@@ -17,15 +19,13 @@ import com.chat.facade.core.chat.ChatFacade;
 import com.chat.mapper.core.chat.ChatCreationRequestDtoToChatCreationParamsMapper;
 import com.chat.service.core.chat.*;
 import com.chat.service.core.user.UserService;
-import net.bytebuddy.dynamic.scaffold.MethodGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -82,11 +82,11 @@ public class ChatFacadeImpl implements ChatFacade {
         Long chatId = requestDto.getChatId();
         String deleterUsername = requestDto.getChatDeleterUsername();
 
-        if(chatWithIdDoesNotExist(chatId)) {
+        if (chatWithIdDoesNotExist(chatId)) {
             return new ChatDeletionResponseDto(List.of(String.format("Chat with a requested id(%s) does not exist, hence cannot be deleted", chatId)));
         }
 
-        if(chatDeleterIsEligibleToDeleteChatWithId(deleterUsername, chatId)) {
+        if (!chatDeleterIsEligibleToDeleteChatWithId(deleterUsername, chatId)) {
             return new ChatDeletionResponseDto(List.of(String.format("User '%s' is not eligible to delete the selected chat", deleterUsername)));
         }
 
@@ -104,13 +104,17 @@ public class ChatFacadeImpl implements ChatFacade {
 
         Long chatId = requestDto.getChatId();
         String chatName = requestDto.getName();
+        String updaterUsername = requestDto.getUpdaterUsername();
 
-        if(chatWithIdDoesNotExist(chatId)) {
+        if (chatWithIdDoesNotExist(chatId)) {
             return new ChatUpdateResponseDto(
                     List.of(String.format("Chat with an id of %s does not exist", chatId))
             );
         }
 
+        if(!chatUpdaterIsEligibleToUpdate(updaterUsername, chatName)) {
+
+        }
         Chat updatedChat = chatService.update(new ChatUpdateParams(
                 chatId,
                 chatName
@@ -126,6 +130,44 @@ public class ChatFacadeImpl implements ChatFacade {
 
     }
 
+    @Override
+    public UserChatUpdateResponseDto updateUserChat(UserChatUpdateRequestDto requestDto) {
+        LOGGER.info("Updating UserChat according to the UserChatUpdateRequestDto - {}", requestDto);
+        Assert.notNull(requestDto, "UserChatUpdateRequestDto must not be null");
+
+        Long userChatId = requestDto.getId();
+        UserChatRoleType userChatRoleType = requestDto.getUserChatRoleType();
+        String updaterUsername = requestDto.getUpdaterUsername();
+
+        Optional<UserChat> userChatOptional = userChatWithId(userChatId);
+        if (userChatOptional.isEmpty()) {
+            return new UserChatUpdateResponseDto(
+                    List.of(String.format("No User-In-Chat with an id of %s", userChatId))
+            );
+        }
+
+        if (!chatUserUpdaterIsEligibleToUpdate(updaterUsername, userChatOptional.get())) {
+            return new UserChatUpdateResponseDto(
+                    List.of(String.format("The user '%s' is not eligible to make the requested change", updaterUsername))
+            );
+        }
+
+        UserChat updatedUserChat = userChatService.updateUserChat(new UserChatUpdateParams(
+                userChatId,
+                userChatRoleType
+        ));
+
+        UserChatUpdateResponseDto responseDto = new UserChatUpdateResponseDto(
+                updatedUserChat.getId(),
+                updatedUserChat.getUserChatRoleType(),
+                requestDto.getUpdaterUsername()
+        );
+
+        LOGGER.info("Successfully updated a UserChat according to the UserChatUpdateRequestDto - {}, result - {}", requestDto, responseDto);
+
+        return responseDto;
+    }
+
     private boolean userWithUsernameDoesNotExist(String username) {
         return userService.findByUsername(username).isEmpty();
     }
@@ -138,10 +180,18 @@ public class ChatFacadeImpl implements ChatFacade {
         return chatService.findById(id).isEmpty();
     }
 
+    private boolean userChatWithIdDoesNotExist(Long id) {
+        return userChatService.findById(id).isEmpty();
+    }
+
+    private Optional<UserChat> userChatWithId(Long id) {
+        return userChatService.findById(id);
+    }
+
     private boolean chatDeleterIsEligibleToDeleteChatWithId(String deleterUsername, Long chatId) {
-        for(UserChat userChat : usersInChatWithId(chatId)) {
+        for (UserChat userChat : usersInChatWithId(chatId)) {
             User user = userChat.getUser();
-            if((user.getUsername().equals(deleterUsername) && userChat.getUserChatRoleType() == UserChatRoleType.CHAT_OWNER) ||
+            if ((user.getUsername().equals(deleterUsername) && userChat.getUserChatRoleType() == UserChatRoleType.CHAT_OWNER) ||
                     user.getUserAppRoles().stream().map(UserAppRole::getUserAppRoleType).collect(Collectors.toList()).contains(UserAppRoleType.APP_SUPERADMIN)) {
                 return true;
             }
@@ -153,5 +203,41 @@ public class ChatFacadeImpl implements ChatFacade {
         return chatService.getById(chatId).getUsersInChat();
     }
 
+    private boolean chatUserUpdaterIsEligibleToUpdate(String username, UserChat userChat) {
+        List<UserChat> usersInChat = userChat.getChat().getUsersInChat();
 
+        if (userHasAppRole(username, UserAppRoleType.APP_SUPERADMIN)) {
+            return true;
+        }
+
+        for (UserChat currentUserChat : usersInChat) {
+            User currentUser = currentUserChat.getUser();
+            if (currentUser.getUsername().equals(username)) {
+                UserChatRoleType currentUserChatRoleType = currentUserChat.getUserChatRoleType();
+                return currentUserChatRoleType == UserChatRoleType.CHAT_ADMIN || currentUserChatRoleType == UserChatRoleType.CHAT_OWNER;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean chatUpdaterIsEligibleToUpdate(String username, String chatName) {
+        if (userHasAppRole(username, UserAppRoleType.APP_SUPERADMIN)) {
+            return true;
+        }
+
+        Chat chat = chatService.getByName(chatName);
+        List<UserChat> usersInChat = chat.getUsersInChat();
+        for(UserChat currentUserChat : usersInChat) {
+            User user = currentUserChat.getUser();
+            if(user.getUsername().equals(username)) {
+                return currentUserChat.getUserChatRoleType() == UserChatRoleType.CHAT_ADMIN ||  currentUserChat.getUserChatRoleType() == UserChatRoleType.CHAT_OWNER;
+            }
+        }
+        return false;
+    }
+
+    private boolean userHasAppRole(String username, UserAppRoleType userAppRoleType) {
+        return userService.getByUsername(username).getUserAppRoles().stream().map(UserAppRole::getUserAppRoleType).collect(Collectors.toList()).contains(userAppRoleType);
+    }
 }

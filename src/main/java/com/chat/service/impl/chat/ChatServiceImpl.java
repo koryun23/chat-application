@@ -95,5 +95,14 @@ public class ChatServiceImpl implements ChatService {
         return updatedChat;
     }
 
+    @Override
+    public Chat getByName(String name) {
+        LOGGER.info("Retrieving a chat with a name of {}", name);
+        Assert.notNull(name, "Chat name must not be null");
+        Chat chat = chatRepository.findByName(name).orElseThrow(() -> new ChatNotFoundException(name));
+        LOGGER.info("Successfully retrieved a chat with a name of {}, result - {}", name, chat);
+        return chat;
+    }
+
 
 }

@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserChatServiceImpl implements UserChatService {
 
@@ -70,5 +72,14 @@ public class UserChatServiceImpl implements UserChatService {
         LOGGER.info("Successfully retrieved a UserChat with an id of {}, result - {}", id, userChat);
         return userChat;
 
+    }
+
+    @Override
+    public Optional<UserChat> findById(Long id) {
+        LOGGER.info("Retrieving an optional UserChat with an id of {}", id);
+        Assert.notNull(id, "UserChat id must not be null");
+        Optional<UserChat> userChatOptional = userChatRepository.findById(id);
+        LOGGER.info("Successfully retrieved an optional UserChat with an id of {}, result - {}", id, userChatOptional);
+        return userChatOptional;
     }
 }
