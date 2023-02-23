@@ -226,19 +226,19 @@ public class ChatFacadeImpl implements ChatFacade {
         String requestingUsername = requestDto.getRequestingUsername();
         Long chatId = requestDto.getChatId();
 
-        if(chatWithIdDoesNotExist(chatId)) {
+        if (chatWithIdDoesNotExist(chatId)) {
             return new UserChatRetrievalResponseDto(
                     List.of(String.format("Chat with an id of %s does not exist", chatId))
             );
         }
 
-        if(userWithUsernameDoesNotExist(requestingUsername)) {
+        if (userWithUsernameDoesNotExist(requestingUsername)) {
             return new UserChatRetrievalResponseDto(
                     List.of(String.format("User '%s' does not exist", requestingUsername))
             );
         }
 
-        if(userIsNotMemberOfChat(requestingUsername, chatId) && !userHasAppRole(requestingUsername, UserAppRoleType.APP_SUPERADMIN)) {
+        if (userIsNotMemberOfChat(requestingUsername, chatId) && !userHasAppRole(requestingUsername, UserAppRoleType.APP_SUPERADMIN)) {
             return new UserChatRetrievalResponseDto(
                     List.of(String.format("User '%s' is not eligible to watch the list of users", requestingUsername))
             );

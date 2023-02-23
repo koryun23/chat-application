@@ -42,18 +42,18 @@ public class UserFacadeImpl implements UserFacade {
 
         List<String> errors = new LinkedList<>();
 
-        if(userWithUsernameExists(requestDto.getUsername())) {
+        if (userWithUsernameExists(requestDto.getUsername())) {
             errors.add("Cannot register since the username is already taken");
         }
 
-        if(errorsFound(errors)) {
+        if (errorsFound(errors)) {
             return new UserRegistrationResponseDto(errors);
         }
 
         User user = userService.create(userRegistrationRequestDtoToUserCreationParamsMapper.apply(requestDto));
 
         List<UserAppRole> userAppRoles = new LinkedList<>();
-        for(UserAppRoleType userAppRoleType : requestDto.getUserAppRoleTypes()) {
+        for (UserAppRoleType userAppRoleType : requestDto.getUserAppRoleTypes()) {
             userAppRoles.add(userAppRoleService.create(new UserAppRoleCreationParams(
                     user.getId(),
                     userAppRoleType

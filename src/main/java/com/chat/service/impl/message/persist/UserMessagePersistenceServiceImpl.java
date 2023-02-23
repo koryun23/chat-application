@@ -15,11 +15,10 @@ import org.springframework.util.Assert;
 @Service
 public class UserMessagePersistenceServiceImpl implements UserMessagePersistenceService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserMessagePersistenceServiceImpl.class);
     private final UserMessageRepository userMessageRepository;
     private final UserService userService;
     private final MessagePersistenceService messagePersistenceService;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserMessagePersistenceServiceImpl.class);
 
     public UserMessagePersistenceServiceImpl(UserMessageRepository userMessageRepository, UserService userService, MessagePersistenceService messagePersistenceService) {
         this.userMessageRepository = userMessageRepository;

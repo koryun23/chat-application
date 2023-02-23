@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MessageSenderServiceJMSImpl implements MessageSenderService {
 
-    private JmsTemplate jmsTemplate;
+    private final JmsTemplate jmsTemplate;
 
     public MessageSenderServiceJMSImpl(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;

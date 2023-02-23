@@ -13,6 +13,7 @@ import io.jsonwebtoken.lang.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ public class UserChatServiceImpl implements UserChatService {
         this.chatService = chatService;
     }
 
+    @Transactional
     @Override
     public UserChat createUserChat(UserChatCreationParams params) {
         LOGGER.info("Adding a user in chat according to user in chat creation params - {}", params);
@@ -44,6 +46,7 @@ public class UserChatServiceImpl implements UserChatService {
         return savedUserChat;
     }
 
+    @Transactional
     @Override
     public UserChat updateUserChat(UserChatUpdateParams params) {
         LOGGER.info("Updating a user in chat according to the User Chat Update params - {}", params);
@@ -65,6 +68,7 @@ public class UserChatServiceImpl implements UserChatService {
 
     }
 
+    @Transactional
     @Override
     public UserChat getById(Long id) {
         LOGGER.info("Retrieving a UserChat with an id of {}", id);
@@ -75,6 +79,7 @@ public class UserChatServiceImpl implements UserChatService {
 
     }
 
+    @Transactional
     @Override
     public Optional<UserChat> findById(Long id) {
         LOGGER.info("Retrieving an optional UserChat with an id of {}", id);
@@ -84,6 +89,7 @@ public class UserChatServiceImpl implements UserChatService {
         return userChatOptional;
     }
 
+    @Transactional
     @Override
     public List<UserChat> getAll(Long chatId) {
         LOGGER.info("Retrieving all users in chat with in id of {}", chatId);

@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
+
     void deleteById(Long id);
 
     Optional<Chat> findByName(String name);

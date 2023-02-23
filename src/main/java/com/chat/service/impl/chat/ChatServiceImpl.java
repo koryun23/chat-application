@@ -22,12 +22,11 @@ import java.util.Optional;
 @Service
 public class ChatServiceImpl implements ChatService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChatServiceImpl.class);
     private final ChatRepository chatRepository;
     private final UserChatRepository userChatRepository;
     private final UserService userService;
     private final ChatCreationParamsToChatMapper chatCreationParamsToChatMapper;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChatServiceImpl.class);
 
     public ChatServiceImpl(ChatRepository chatRepository, UserChatRepository userChatRepository, UserService userService, ChatCreationParamsToChatMapper chatCreationParamsToChatMapper) {
         this.chatRepository = chatRepository;
@@ -95,6 +94,7 @@ public class ChatServiceImpl implements ChatService {
         return updatedChat;
     }
 
+    @Transactional
     @Override
     public Chat getByName(String name) {
         LOGGER.info("Retrieving a chat with a name of {}", name);

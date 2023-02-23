@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Transactional
     @Override
     public Optional<User> findById(Long id) {
         LOGGER.info("Retrieving an optional user with an if of {}", id);
