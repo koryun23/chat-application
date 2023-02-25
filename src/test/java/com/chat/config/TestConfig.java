@@ -19,31 +19,19 @@ import java.util.Properties;
 public class TestConfig {
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, Environment env) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         entityManagerFactoryBean.setPackagesToScan("com.chat.entity");
 
-        Properties jpaProperties = new Properties();
-
-        jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-
-        jpaProperties.put("hibernate.show_sql",
-                true
-        );
-
-
-        entityManagerFactoryBean.setJpaProperties(jpaProperties);
-
         return entityManagerFactoryBean;
     }
 
     @Bean(destroyMethod = "close")
-    public DataSource dataSource(Environment env) {
+    public DataSource dataSource() {
         HikariConfig dataSourceConfig = new HikariConfig();
 
-        //dataSourceConfig.setDriverClassName(env.getRequiredProperty("db.driver"));
         dataSourceConfig.setJdbcUrl("jdbc:postgresql://localhost:6432/postgres");
         dataSourceConfig.setUsername("postgres");
         dataSourceConfig.setPassword("");
