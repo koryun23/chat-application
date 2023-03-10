@@ -50,10 +50,15 @@ public class UserChatController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
     }
 
-    @GetMapping
-    public ResponseEntity<UserChatRetrievalResponseDto> getUsersInChat(@RequestBody UserChatRetrievalRequestDto requestDto, HttpServletRequest request) {
-        requestDto.setRequestingUsername(httpServletRequestHandler.extractUsername(request));
-        UserChatRetrievalResponseDto responseDto = chatFacade.retrieveUsersInChat(requestDto);
+    @GetMapping(path = "/{chatId}")
+    public ResponseEntity<UserChatRetrievalResponseDto> getUsersInChat(@PathVariable Long chatId, HttpServletRequest request) {
+        String username = httpServletRequestHandler.extractUsername(request);
+        UserChatRetrievalResponseDto responseDto = chatFacade.retrieveUsersInChat(
+                new UserChatRetrievalRequestDto(
+                        username,
+                        chatId
+                )
+        );
 
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);

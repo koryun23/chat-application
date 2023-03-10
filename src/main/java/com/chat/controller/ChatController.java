@@ -6,6 +6,7 @@ import com.chat.dto.request.ChatUpdateRequestDto;
 import com.chat.dto.response.ChatCreationResponseDto;
 import com.chat.dto.response.ChatDeletionResponseDto;
 import com.chat.dto.response.ChatUpdateResponseDto;
+import com.chat.dto.response.UserChatRetrievalResponseDto;
 import com.chat.facade.core.chat.ChatFacade;
 import com.chat.handler.HttpServletRequestHandler;
 import io.jsonwebtoken.lang.Assert;
@@ -28,9 +29,9 @@ public class ChatController {
     }
 
     @PostMapping(path = "/create")
-    public ResponseEntity<ChatCreationResponseDto> create(@RequestBody ChatCreationRequestDto requestDto) {
+    public ResponseEntity<ChatCreationResponseDto> create(@RequestBody ChatCreationRequestDto requestDto, HttpServletRequest request) {
         Assert.notNull(requestDto, "Chat creation request dto must not be null");
-
+        requestDto.setCreatorUsername(httpServletRequestHandler.extractUsername(request));
         ChatCreationResponseDto responseDto = chatFacade.createChat(requestDto);
 
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
