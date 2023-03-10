@@ -98,4 +98,13 @@ public class UserChatServiceImpl implements UserChatService {
         LOGGER.info("Successfully retrieved all users in chat with an id of {}, result - {}", chatId, allUsersInChat);
         return allUsersInChat;
     }
+
+    @Override
+    public List<UserChat> getAllByUserId(Long userId) {
+        LOGGER.info("Retrieving all chats of user with an id of {}", userId);
+        Assert.notNull(userId, "User id must not be null");
+        List<UserChat> allByUserId = userChatRepository.findAllByUserId(userId);
+        LOGGER.info("Successfully retrieved all chats of user with an if of {}, result - {}", userId, allByUserId);
+        return allByUserId;
+    }
 }

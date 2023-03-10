@@ -17,4 +17,6 @@ public interface UserChatService {
     Optional<UserChat> findById(Long id);
 
     List<UserChat> getAll(Long chatId);
+
+    List<UserChat> getAllByUserId(Long userId);
 }

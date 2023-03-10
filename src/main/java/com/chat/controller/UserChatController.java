@@ -1,8 +1,10 @@
 package com.chat.controller;
 
+import com.chat.dto.request.ChatListRetrievalRequestDto;
 import com.chat.dto.request.UserChatCreationRequestDto;
 import com.chat.dto.request.UserChatRetrievalRequestDto;
 import com.chat.dto.request.UserChatUpdateRequestDto;
+import com.chat.dto.response.ChatListRetrievalResponseDto;
 import com.chat.dto.response.UserChatCreationResponseDto;
 import com.chat.dto.response.UserChatRetrievalResponseDto;
 import com.chat.dto.response.UserChatUpdateResponseDto;
@@ -59,6 +61,17 @@ public class UserChatController {
                         chatId
                 )
         );
+
+        if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+    }
+
+    @GetMapping(path = "/{userId}")
+    public ResponseEntity<ChatListRetrievalResponseDto> getChatsOfUser(@PathVariable Long userId, HttpServletRequest request) {
+        ChatListRetrievalRequestDto requestDto = new ChatListRetrievalRequestDto(httpServletRequestHandler.extractUsername(request), userId);
+        ChatListRetrievalResponseDto responseDto = chatFacade.retrieveChatsOfUser(requestDto);
 
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
