@@ -1,7 +1,12 @@
 package com.chat.facade.impl.user;
 
+import com.chat.dto.plain.UserDto;
+import com.chat.dto.request.UserListRetrievalRequestDto;
 import com.chat.dto.request.UserRegistrationRequestDto;
+import com.chat.dto.request.UserRetrievalRequestDto;
+import com.chat.dto.response.UserListRetrievalResponseDto;
 import com.chat.dto.response.UserRegistrationResponseDto;
+import com.chat.dto.response.UserRetrievalResponseDto;
 import com.chat.entity.role.UserAppRole;
 import com.chat.entity.role.type.UserAppRoleType;
 import com.chat.entity.user.User;
@@ -65,6 +70,91 @@ public class UserFacadeImpl implements UserFacade {
         );
         LOGGER.info("Successfully registered a user according to the user registration request dto - {}, result - {}", requestDto, responseDto);
         return responseDto;
+    }
+
+    @Override
+    public UserRetrievalResponseDto retrieveSingleUser(UserRetrievalRequestDto requestDto) {
+        LOGGER.info("Retrieving a single user according to the UserRetrievalRequestDto - {}", requestDto);
+        Assert.notNull(requestDto, "UserRetrievalRequestDto must not be null");
+
+        String retrieverUsername = requestDto.getRetrieverUsername();
+        String username = requestDto.getUsername();
+
+        if(!userWithUsernameExists(retrieverUsername)) {
+            return new UserRetrievalResponseDto(List.of(String.format("No user found having a username of %s", retrieverUsername)));
+        }
+
+        if(!userWithUsernameExists(username)) {
+            return new UserRetrievalResponseDto(List.of(String.format("No user found having a username of %s", username)));
+        }
+
+        User userByUsername = userService.getByUsername(username);
+        UserRetrievalResponseDto responseDto = new UserRetrievalResponseDto(
+                new UserDto(
+                        userByUsername.getUsername(),
+                        userByUsername.getPassword(),
+                        userByUsername.getFirstName(),
+                        userByUsername.getSecondName(),
+                        userByUsername.getJoinedAt()
+                ),
+                LocalDateTime.now()
+        );
+        LOGGER.info("Successfully retrieved a single user according to the UserRetrievalRequestDto - {}, result - {}", requestDto, responseDto);
+        return responseDto;
+    }
+
+    @Override
+    public UserListRetrievalResponseDto retrieveMultipleUsers(UserListRetrievalRequestDto requestDto) {
+        LOGGER.info("Retrieving UserListRetrievalResponseDto according to the UserListRetrievalRequestDto - {}", requestDto);
+        Assert.notNull(requestDto, "UserListRetrievalRequestDto must not be null");
+
+        String keyWord = requestDto.getKeyWord();
+        String retrieverUsername = requestDto.getRetrieverUsername();
+
+        if(!userWithUsernameExists(retrieverUsername)) {
+            return new UserListRetrievalResponseDto(List.of(String.format("No user found having a username of %s", retrieverUsername)));
+        }
+
+        List<UserDto> userDtoList = new LinkedList<>();
+
+        for(User user : userService.findUsersWithSimilarUsernames(keyWord)) {
+            userDtoList.add(new UserDto(
+                    user.getUsername(),
+                    user.getPassword(),
+                    user.getFirstName(),
+                    user.getSecondName(),
+                    user.getJoinedAt()
+            ));
+        }
+
+        for(User user : userService.findUsersWithSimilarFirstNames(keyWord)) {
+            userDtoList.add(new UserDto(
+                    user.getUsername(),
+                    user.getPassword(),
+                    user.getFirstName(),
+                    user.getSecondName(),
+                    user.getJoinedAt()
+            ));
+        }
+
+        for(User user : userService.findUsersWithSimilarSecondNames(keyWord)) {
+            userDtoList.add(new UserDto(
+                    user.getUsername(),
+                    user.getPassword(),
+                    user.getFirstName(),
+                    user.getSecondName(),
+                    user.getJoinedAt()
+            ));
+        }
+
+        UserListRetrievalResponseDto responseDto = new UserListRetrievalResponseDto(
+                userDtoList,
+                LocalDateTime.now()
+        );
+
+        LOGGER.info("Successfully retrieved a UserListRetrievalResponseDto according to the UserListRetrievalRequestDto - {}, result - {}", requestDto, responseDto);
+        return responseDto;
+
     }
 
     private boolean errorsFound(List<String> errors) {

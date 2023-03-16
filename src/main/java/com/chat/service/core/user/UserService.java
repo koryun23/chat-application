@@ -2,6 +2,7 @@ package com.chat.service.core.user;
 
 import com.chat.entity.user.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -17,4 +18,10 @@ public interface UserService {
     Optional<User> findById(Long id);
 
     boolean userWithUsernameOrPasswordExists(String username, String password);
+
+    List<User> findUsersWithSimilarFirstNames(String firstName);
+
+    List<User> findUsersWithSimilarSecondNames(String secondName);
+
+    List<User> findUsersWithSimilarUsernames(String username);
 }

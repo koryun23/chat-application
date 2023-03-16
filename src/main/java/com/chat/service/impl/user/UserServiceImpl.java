@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,5 +96,68 @@ public class UserServiceImpl implements UserService {
             }
         }
         return false;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> findUsersWithSimilarFirstNames(String firstName) {
+        LOGGER.info("Retrieving users having a first name similar to {}", firstName);
+        Assert.notNull(firstName, "First name must not be null");
+        Assert.hasText(firstName, "First name must not be empty");
+
+        List<User> allUsersWithSimilarFirstNames = new LinkedList<>();
+        List<User> allUsers = userRepository.findAll();
+
+        for(User user : allUsers) {
+            String currentFirstName = user.getFirstName();
+            if(currentFirstName.contains(firstName)) {
+                allUsersWithSimilarFirstNames.add(user);
+            }
+        }
+
+        LOGGER.info("Successfully retrieved all users having a first name similar to {}, result - {}", firstName, allUsersWithSimilarFirstNames);
+        return allUsersWithSimilarFirstNames;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> findUsersWithSimilarSecondNames(String secondName) {
+        LOGGER.info("Retrieving users having a second name similar to {}", secondName);
+        Assert.notNull(secondName, "Second Name must not be null");
+        Assert.hasText(secondName, "Second name must not be empty");
+
+        List<User> usersWithSimilarSecondNames = new LinkedList<>();
+        List<User> allUsers = userRepository.findAll();
+
+        for(User user : allUsers) {
+            String currentSecondName = user.getSecondName();
+            if(currentSecondName.contains(secondName)) {
+                usersWithSimilarSecondNames.add(user);
+            }
+        }
+
+        LOGGER.info("Successfully retrieved all users having a second name similar to {}, result - {}", secondName, usersWithSimilarSecondNames);
+        return usersWithSimilarSecondNames;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> findUsersWithSimilarUsernames(String username) {
+        LOGGER.info("Retrieving all users having a username similar to {}", username);
+        Assert.notNull(username, "Username must not be null");
+        Assert.hasText(username, "Username must not be empty");
+
+        List<User> usersWithSimilarUsernames = new LinkedList<>();
+        List<User> allUsers = userRepository.findAll();
+
+        for(User user : allUsers) {
+            String currentUsername = user.getUsername();
+            if(currentUsername.contains(username)) {
+                usersWithSimilarUsernames.add(user);
+            }
+        }
+
+        LOGGER.info("Successfully retrieved all users having a username similar to {}, result - {}", username, usersWithSimilarUsernames);
+        return usersWithSimilarUsernames;
     }
 }
