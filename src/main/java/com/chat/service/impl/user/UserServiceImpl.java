@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -77,5 +78,22 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findById(id);
         LOGGER.info("Successfully retrieved an optional user with an id of {}, result - {}", id, optionalUser);
         return optionalUser;
+    }
+
+    @Override
+    public boolean userWithUsernameOrPasswordExists(String username, String password) {
+        LOGGER.info("Checking if user with username {} or password {} exists", username, password);
+        Assert.notNull(username, "Username must not be null");
+        Assert.hasText(username, "Username must not be empty");
+        Assert.notNull(password, "Password must not be null");
+        Assert.hasText(password, "Password must not be empty");
+
+        List<User> allUsers = userRepository.findAll();
+        for(User user : allUsers) {
+            if(passwordEncoder.matches(password, user.getPassword()) || user.getUsername().equals(username)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -40,14 +40,8 @@ public class UserFacadeImpl implements UserFacade {
         LOGGER.info("Registering a user according to the user registration request dto - {}", requestDto);
         Assert.notNull(requestDto, "User registration request dto should not be null");
 
-        List<String> errors = new LinkedList<>();
-
-        if (userWithUsernameExists(requestDto.getUsername())) {
-            errors.add("Cannot register since the username is already taken");
-        }
-
-        if (errorsFound(errors)) {
-            return new UserRegistrationResponseDto(errors);
+        if (userService.userWithUsernameOrPasswordExists(requestDto.getUsername(), requestDto.getPassword())) {
+            return new UserRegistrationResponseDto(List.of("Cannot register since the credentials are already taken"));
         }
 
         User user = userService.create(userRegistrationRequestDtoToUserCreationParamsMapper.apply(requestDto));
