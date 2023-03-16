@@ -32,8 +32,9 @@ public class JwtTokenValidationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        removeTokenPrefix(token);
+        token = token.substring(7);
         if (jwtService.isExpired(token)) {
+            System.out.println("TOKEN IS EXPIRED");
             response.setStatus(401);
             return;
         }

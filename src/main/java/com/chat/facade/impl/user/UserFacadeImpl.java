@@ -22,8 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -115,10 +114,10 @@ public class UserFacadeImpl implements UserFacade {
             return new UserListRetrievalResponseDto(List.of(String.format("No user found having a username of %s", retrieverUsername)));
         }
 
-        List<UserDto> userDtoList = new LinkedList<>();
+        Set<UserDto> userDtoSet = new HashSet<>();
 
         for(User user : userService.findUsersWithSimilarUsernames(keyWord)) {
-            userDtoList.add(new UserDto(
+            userDtoSet.add(new UserDto(
                     user.getUsername(),
                     user.getPassword(),
                     user.getFirstName(),
@@ -128,7 +127,7 @@ public class UserFacadeImpl implements UserFacade {
         }
 
         for(User user : userService.findUsersWithSimilarFirstNames(keyWord)) {
-            userDtoList.add(new UserDto(
+            userDtoSet.add(new UserDto(
                     user.getUsername(),
                     user.getPassword(),
                     user.getFirstName(),
@@ -138,7 +137,7 @@ public class UserFacadeImpl implements UserFacade {
         }
 
         for(User user : userService.findUsersWithSimilarSecondNames(keyWord)) {
-            userDtoList.add(new UserDto(
+            userDtoSet.add(new UserDto(
                     user.getUsername(),
                     user.getPassword(),
                     user.getFirstName(),
@@ -148,7 +147,7 @@ public class UserFacadeImpl implements UserFacade {
         }
 
         UserListRetrievalResponseDto responseDto = new UserListRetrievalResponseDto(
-                userDtoList,
+                new LinkedList<>(userDtoSet),
                 LocalDateTime.now()
         );
 

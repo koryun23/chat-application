@@ -27,7 +27,7 @@ public class UserController {
         this.httpServletRequestHandler = httpServletRequestHandler;
     }
 
-    @GetMapping(path = "/{username}")
+    /*@GetMapping(path = "/{username}")
     public ResponseEntity<UserRetrievalResponseDto> retrieveUser(@PathVariable String username, HttpServletRequest request) {
         UserRetrievalRequestDto requestDto = new UserRetrievalRequestDto(
                 httpServletRequestHandler.extractUsername(request),
@@ -38,7 +38,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
-    }
+    }*/
 
     @GetMapping(path = "/{keyWord}")
     public ResponseEntity<UserListRetrievalResponseDto> retrieveUserList(@PathVariable String keyWord, HttpServletRequest request) {
