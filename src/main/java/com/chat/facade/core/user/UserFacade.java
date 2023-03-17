@@ -12,6 +12,4 @@ public interface UserFacade {
     UserRegistrationResponseDto register(UserRegistrationRequestDto requestDto);
 
     UserRetrievalResponseDto retrieveSingleUser(UserRetrievalRequestDto requestDto);
-
-    UserListRetrievalResponseDto retrieveMultipleUsers(UserListRetrievalRequestDto requestDto);
 }

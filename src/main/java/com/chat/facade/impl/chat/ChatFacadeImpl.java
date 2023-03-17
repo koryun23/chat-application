@@ -256,34 +256,6 @@ public class ChatFacadeImpl implements ChatFacade {
         return responseDto;
     }
 
-    @Override
-    public ChatListRetrievalResponseDto retrieveChatsOfUser(ChatListRetrievalRequestDto requestDto) {
-        LOGGER.info("Retrieving chats of a user according to the ChatListRetrievalRequestDto - {}", requestDto);
-        Assert.notNull(requestDto, "ChatListRetrievalRequestDto must not be null");
-
-        String retrieverUsername = requestDto.getRetrieverUsername();
-        Long userId = requestDto.getUserId();
-
-        if(userWithUsernameDoesNotExist(retrieverUsername)) {
-            return new ChatListRetrievalResponseDto(List.of(
-                    String.format("User with username %s does not exist", retrieverUsername)
-            ));
-        }
-
-        if(userWithIdDoesNotExist(userId)) {
-            return new ChatListRetrievalResponseDto(List.of(
-                    String.format("User with id %s does not exist", userId)
-            ));
-        }
-
-        List<ChatDto> chatDtos = userChatService.getAllByUserId(userId).stream().map(userChat -> chatService.getById(userChat.getChat().getId())).collect(Collectors.toList()).stream().map(chat -> new ChatDto(chat.getName(), chat.getChatType(), chat.getCreatedAt())).collect(Collectors.toList());
-        ChatListRetrievalResponseDto responseDto = new ChatListRetrievalResponseDto(userId, chatDtos, LocalDateTime.now());
-
-        LOGGER.info("Successfully retrieved all chats of a user according to the ChatListRetrievalRequestDto - {}, result - {}", requestDto, responseDto);
-        return responseDto;
-
-    }
-
     private boolean userWithUsernameDoesNotExist(String username) {
         return userService.findByUsername(username).isEmpty();
     }

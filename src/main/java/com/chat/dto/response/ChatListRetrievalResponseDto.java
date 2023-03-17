@@ -8,8 +8,9 @@ import java.util.Objects;
 
 public class ChatListRetrievalResponseDto {
 
-    private Long userId;
-    private List<ChatDto> chatDtos;
+    private String retrieverUsername;
+    private String keyWord;
+    private List<ChatDto> chatDtoList;
     private LocalDateTime retrievedAt;
 
     private List<String> errors;
@@ -17,9 +18,10 @@ public class ChatListRetrievalResponseDto {
     public ChatListRetrievalResponseDto() {
     }
 
-    public ChatListRetrievalResponseDto(Long userId, List<ChatDto> chats, LocalDateTime retrievedAt) {
-        this.userId = userId;
-        this.chatDtos = chats;
+    public ChatListRetrievalResponseDto(String retrieverUsername, String keyWord, List<ChatDto> chatDtoList, LocalDateTime retrievedAt) {
+        this.retrieverUsername = retrieverUsername;
+        this.keyWord = keyWord;
+        this.chatDtoList = chatDtoList;
         this.retrievedAt = retrievedAt;
     }
 
@@ -27,20 +29,28 @@ public class ChatListRetrievalResponseDto {
         this.errors = errors;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getRetrieverUsername() {
+        return retrieverUsername;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setRetrieverUsername(String retrieverUsername) {
+        this.retrieverUsername = retrieverUsername;
     }
 
-    public List<ChatDto> getChatDtos() {
-        return chatDtos;
+    public String getKeyWord() {
+        return keyWord;
     }
 
-    public void setChatDtos(List<ChatDto> chats) {
-        this.chatDtos = chats;
+    public void setKeyWord(String keyWord) {
+        this.keyWord = keyWord;
+    }
+
+    public List<ChatDto> getChatDtoList() {
+        return chatDtoList;
+    }
+
+    public void setChatDtoList(List<ChatDto> chatDtoList) {
+        this.chatDtoList = chatDtoList;
     }
 
     public LocalDateTime getRetrievedAt() {
@@ -64,19 +74,20 @@ public class ChatListRetrievalResponseDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatListRetrievalResponseDto that = (ChatListRetrievalResponseDto) o;
-        return Objects.equals(userId, that.userId) && Objects.equals(chatDtos, that.chatDtos) && Objects.equals(retrievedAt, that.retrievedAt) && Objects.equals(errors, that.errors);
+        return Objects.equals(retrieverUsername, that.retrieverUsername) && Objects.equals(keyWord, that.keyWord) && Objects.equals(chatDtoList, that.chatDtoList) && Objects.equals(retrievedAt, that.retrievedAt) && Objects.equals(errors, that.errors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, chatDtos, retrievedAt, errors);
+        return Objects.hash(retrieverUsername, keyWord, chatDtoList, retrievedAt, errors);
     }
 
     @Override
     public String toString() {
         return "ChatListRetrievalResponseDto{" +
-                "userId=" + userId +
-                ", chats=" + chatDtos +
+                "retrieverUsername='" + retrieverUsername + '\'' +
+                ", keyWord='" + keyWord + '\'' +
+                ", chatDtoList=" + chatDtoList +
                 ", retrievedAt=" + retrievedAt +
                 ", errors=" + errors +
                 '}';

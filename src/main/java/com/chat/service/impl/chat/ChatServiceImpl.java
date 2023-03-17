@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -104,5 +106,22 @@ public class ChatServiceImpl implements ChatService {
         return chat;
     }
 
+    @Override
+    public List<Chat> findChatsWithSimilarNames(String name) {
+        LOGGER.info("Retrieving chats with a name similar to {}", name);
+        Assert.notNull(name, "Chat name must not be null");
 
+        List<Chat> chatsWithSimilarNames = new LinkedList<>();
+        List<Chat> allChats = chatRepository.findAll();
+
+        for(Chat chat : allChats) {
+            String currentName = chat.getName();
+            if(currentName.contains(name)) {
+                chatsWithSimilarNames.add(chat);
+            }
+        }
+
+        LOGGER.info("Successfully retrieved chats with a name similar to {}, result - {}", name, chatsWithSimilarNames);
+        return chatsWithSimilarNames;
+    }
 }

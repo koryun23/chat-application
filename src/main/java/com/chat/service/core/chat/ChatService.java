@@ -3,6 +3,7 @@ package com.chat.service.core.chat;
 import com.chat.entity.chat.Chat;
 import com.chat.entity.chat.UserChat;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ChatService {
@@ -18,4 +19,6 @@ public interface ChatService {
     Chat update(ChatUpdateParams params);
 
     Chat getByName(String name);
+
+    List<Chat> findChatsWithSimilarNames(String name);
 }

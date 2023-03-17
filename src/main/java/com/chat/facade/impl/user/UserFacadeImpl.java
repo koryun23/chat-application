@@ -102,60 +102,6 @@ public class UserFacadeImpl implements UserFacade {
         return responseDto;
     }
 
-    @Override
-    public UserListRetrievalResponseDto retrieveMultipleUsers(UserListRetrievalRequestDto requestDto) {
-        LOGGER.info("Retrieving UserListRetrievalResponseDto according to the UserListRetrievalRequestDto - {}", requestDto);
-        Assert.notNull(requestDto, "UserListRetrievalRequestDto must not be null");
-
-        String keyWord = requestDto.getKeyWord();
-        String retrieverUsername = requestDto.getRetrieverUsername();
-
-        if(!userWithUsernameExists(retrieverUsername)) {
-            return new UserListRetrievalResponseDto(List.of(String.format("No user found having a username of %s", retrieverUsername)));
-        }
-
-        Set<UserDto> userDtoSet = new HashSet<>();
-
-        for(User user : userService.findUsersWithSimilarUsernames(keyWord)) {
-            userDtoSet.add(new UserDto(
-                    user.getUsername(),
-                    user.getPassword(),
-                    user.getFirstName(),
-                    user.getSecondName(),
-                    user.getJoinedAt()
-            ));
-        }
-
-        for(User user : userService.findUsersWithSimilarFirstNames(keyWord)) {
-            userDtoSet.add(new UserDto(
-                    user.getUsername(),
-                    user.getPassword(),
-                    user.getFirstName(),
-                    user.getSecondName(),
-                    user.getJoinedAt()
-            ));
-        }
-
-        for(User user : userService.findUsersWithSimilarSecondNames(keyWord)) {
-            userDtoSet.add(new UserDto(
-                    user.getUsername(),
-                    user.getPassword(),
-                    user.getFirstName(),
-                    user.getSecondName(),
-                    user.getJoinedAt()
-            ));
-        }
-
-        UserListRetrievalResponseDto responseDto = new UserListRetrievalResponseDto(
-                new LinkedList<>(userDtoSet),
-                LocalDateTime.now()
-        );
-
-        LOGGER.info("Successfully retrieved a UserListRetrievalResponseDto according to the UserListRetrievalRequestDto - {}, result - {}", requestDto, responseDto);
-        return responseDto;
-
-    }
-
     private boolean errorsFound(List<String> errors) {
         return errors.size() != 0;
     }
