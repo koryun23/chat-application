@@ -60,6 +60,7 @@ public class ChatFacadeImpl implements ChatFacade {
         ));
 
         ChatCreationResponseDto responseDto = new ChatCreationResponseDto(
+                chat.getId(),
                 chat.getName(),
                 chat.getChatType(),
                 chat.getCreatedAt(),

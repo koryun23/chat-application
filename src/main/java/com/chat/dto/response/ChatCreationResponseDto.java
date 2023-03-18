@@ -8,6 +8,7 @@ import java.util.Objects;
 
 public class ChatCreationResponseDto {
 
+    private Long id;
     private String name;
     private ChatType chatType;
     private LocalDateTime createdAt;
@@ -15,7 +16,8 @@ public class ChatCreationResponseDto {
 
     private List<String> errors;
 
-    public ChatCreationResponseDto(String name, ChatType chatType, LocalDateTime createdAt, String creatorUsername) {
+    public ChatCreationResponseDto(Long id, String name, ChatType chatType, LocalDateTime createdAt, String creatorUsername) {
+        this.id = id;
         this.name = name;
         this.chatType = chatType;
         this.createdAt = createdAt;
@@ -24,6 +26,14 @@ public class ChatCreationResponseDto {
 
     public ChatCreationResponseDto(List<String> errors) {
         this.errors = errors;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -71,17 +81,18 @@ public class ChatCreationResponseDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatCreationResponseDto that = (ChatCreationResponseDto) o;
-        return Objects.equals(name, that.name) && chatType == that.chatType && Objects.equals(createdAt, that.createdAt) && Objects.equals(errors, that.errors) && Objects.equals(creatorUsername, that.creatorUsername);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && chatType == that.chatType && Objects.equals(createdAt, that.createdAt) && Objects.equals(errors, that.errors) && Objects.equals(creatorUsername, that.creatorUsername);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, chatType, createdAt, errors, creatorUsername);
+        return Objects.hash(id, name, chatType, createdAt, errors, creatorUsername);
     }
 
     @Override
     public String toString() {
         return "ChatCreationResponseDto{" +
+                "id='" + id + '\'' +
                 "name='" + name + '\'' +
                 ", chatType=" + chatType +
                 ", createdAt=" + createdAt +
