@@ -21,4 +21,6 @@ public interface ChatService {
     Chat getByName(String name);
 
     List<Chat> findChatsWithSimilarNames(String name);
+
+    Optional<Chat> findByName(String name);
 }

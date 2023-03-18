@@ -124,4 +124,17 @@ public class ChatServiceImpl implements ChatService {
         LOGGER.info("Successfully retrieved chats with a name similar to {}, result - {}", name, chatsWithSimilarNames);
         return chatsWithSimilarNames;
     }
+
+    @Override
+    public Optional<Chat> findByName(String name) {
+        LOGGER.info("Retrieving an optional of a chat with a name of {}", name);
+        Assert.notNull(name, "Chat name must not be null");
+        Assert.hasText(name, "Chat name must not be empty");
+
+        Optional<Chat> chatOptional = chatRepository.findByName(name);
+
+        LOGGER.info("Successfully retrieved a chat optional with a name of {}, result - {}", name, chatOptional);
+
+        return chatOptional;
+    }
 }
