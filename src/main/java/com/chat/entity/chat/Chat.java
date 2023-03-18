@@ -24,6 +24,7 @@ public class Chat {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "chat_type", nullable = false)
     private ChatType chatType;
 
