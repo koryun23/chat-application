@@ -22,6 +22,7 @@ import org.springframework.util.Assert;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -47,6 +48,28 @@ public class ChatFacadeImpl implements ChatFacade {
 
         if (userWithUsernameDoesNotExist(requestDto.getCreatorUsername())) {
             return new ChatCreationResponseDto(List.of("No user is registered with a username of " + requestDto.getCreatorUsername()));
+        }
+
+        // USERNAME - USERNAME
+        if(requestDto.getChatType() == ChatType.PERSONAL) {
+            String name = requestDto.getName();
+            List<String> usernamesFromChatName = extractUsernamesFromChatName(name, name.indexOf("-"));
+            Optional<User> firstOptionalUser = userService.findByUsername(usernamesFromChatName.get(0));
+            Optional<User> secondOptionalUser = userService.findByUsername(usernamesFromChatName.get(1));
+            if(firstOptionalUser.isEmpty() || secondOptionalUser.isEmpty()) {
+                return new ChatCreationResponseDto(List.of(String.format("Chat name %s is not valid", name)));
+            }
+
+            List<Long> firstUserChatIds = userChatService.getAllByUserId(firstOptionalUser.get().getId()).stream().map(UserChat::getChat).map(Chat::getId).collect(Collectors.toList());
+            Set<Long> secondUserChatIds = userChatService.getAllByUserId(secondOptionalUser.get().getId()).stream().map(UserChat::getChat).map(Chat::getId).collect(Collectors.toSet());
+            for(Long id : firstUserChatIds) {
+                if(secondUserChatIds.contains(id) && chatService.getById(id).getChatType() == ChatType.PERSONAL) {
+                    return new ChatCreationResponseDto(List.of("Chat already exists"));
+                }
+            }
+        }
+        if(chatService.findByName(requestDto.getName()).isPresent()) {
+            return new ChatCreationResponseDto(List.of(String.format("Chat name %s is already taken", requestDto.getName())));
         }
 
         Chat chat = chatService.createChat(chatCreationRequestDtoToChatCreationParamsMapper.apply(requestDto));
@@ -315,5 +338,12 @@ public class ChatFacadeImpl implements ChatFacade {
 
     private boolean userIsNotMemberOfChat(String username, Long chatId) {
         return !chatService.getById(chatId).getUsersInChat().stream().map(UserChat::getUser).map(User::getUsername).collect(Collectors.toList()).contains(username);
+    }
+
+    private List<String> extractUsernamesFromChatName(String name, int hyphenIndex) {
+        return List.of(
+                name.substring(0, hyphenIndex - 1),
+                name.substring(hyphenIndex + 2)
+        );
     }
 }
