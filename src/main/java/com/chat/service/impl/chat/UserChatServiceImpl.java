@@ -38,7 +38,7 @@ public class UserChatServiceImpl implements UserChatService {
         LOGGER.info("Adding a user in chat according to user in chat creation params - {}", params);
         Assert.notNull(params, "User in chat creation params must not be null");
         UserChat savedUserChat = userChatRepository.save(new UserChat(
-                userService.getById(params.getUserId()),
+                userService.getByUsername(params.getUsername()),
                 chatService.getById(params.getChatId()),
                 params.getUserChatRoleType()
         ));

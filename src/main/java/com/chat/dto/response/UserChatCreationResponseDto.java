@@ -9,7 +9,7 @@ import java.util.Objects;
 public class UserChatCreationResponseDto {
 
     private String creatorUsername;
-    private Long userId;
+    private String addedUserUsername;
     private Long chatId;
     private UserChatRoleType userChatRoleType;
     private LocalDateTime createdAt;
@@ -19,9 +19,9 @@ public class UserChatCreationResponseDto {
     public UserChatCreationResponseDto() {
     }
 
-    public UserChatCreationResponseDto(String creatorUsername, Long userId, Long chatId, UserChatRoleType userChatRoleType, LocalDateTime createdAt) {
+    public UserChatCreationResponseDto(String creatorUsername, String addedUserUsername, Long chatId, UserChatRoleType userChatRoleType, LocalDateTime createdAt) {
         this.creatorUsername = creatorUsername;
-        this.userId = userId;
+        this.addedUserUsername = addedUserUsername;
         this.chatId = chatId;
         this.userChatRoleType = userChatRoleType;
         this.createdAt = createdAt;
@@ -39,12 +39,12 @@ public class UserChatCreationResponseDto {
         this.creatorUsername = creatorUsername;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getAddedUserUsername() {
+        return addedUserUsername;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setAddedUserUsername(String addedUserUsername) {
+        this.addedUserUsername = addedUserUsername;
     }
 
     public Long getChatId() {
@@ -84,19 +84,19 @@ public class UserChatCreationResponseDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserChatCreationResponseDto that = (UserChatCreationResponseDto) o;
-        return Objects.equals(creatorUsername, that.creatorUsername) && Objects.equals(userId, that.userId) && Objects.equals(chatId, that.chatId) && userChatRoleType == that.userChatRoleType && Objects.equals(createdAt, that.createdAt) && Objects.equals(errors, that.errors);
+        return Objects.equals(creatorUsername, that.creatorUsername) && Objects.equals(addedUserUsername, that.addedUserUsername) && Objects.equals(chatId, that.chatId) && userChatRoleType == that.userChatRoleType && Objects.equals(createdAt, that.createdAt) && Objects.equals(errors, that.errors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(creatorUsername, userId, chatId, userChatRoleType, createdAt, errors);
+        return Objects.hash(creatorUsername, addedUserUsername, chatId, userChatRoleType, createdAt, errors);
     }
 
     @Override
     public String toString() {
         return "UserChatCreationResponseDto{" +
                 "creatorUsername='" + creatorUsername + '\'' +
-                ", userId=" + userId +
+                ", addedUserUsername='" + addedUserUsername + '\'' +
                 ", chatId=" + chatId +
                 ", userChatRoleType=" + userChatRoleType +
                 ", createdAt=" + createdAt +

@@ -54,7 +54,7 @@ public class ChatFacadeImpl implements ChatFacade {
         UserChatRoleType userChatRoleType = detectUserChatRole(requestDto.getChatType());
 
         UserChat userInChat = userChatService.createUserChat(new UserChatCreationParams(
-                userService.getByUsername(requestDto.getCreatorUsername()).getId(),
+                requestDto.getCreatorUsername(),
                 chat.getId(),
                 userChatRoleType
         ));
@@ -170,7 +170,7 @@ public class ChatFacadeImpl implements ChatFacade {
         Assert.notNull(requestDto, "UserChatCreationRequestDto must not be null");
 
         String creatorUsername = requestDto.getCreatorUsername();
-        Long userId = requestDto.getUserId();
+        String addedUserUsername = requestDto.getAddedUserUsername();
         Long chatId = requestDto.getChatId();
         UserChatRoleType userChatRoleType = requestDto.getUserChatRoleType();
 
@@ -184,9 +184,9 @@ public class ChatFacadeImpl implements ChatFacade {
                     List.of(String.format("User with username of %s does not exist.", creatorUsername))
             );
         }
-        if (userWithIdDoesNotExist(userId)) {
+        if (userWithUsernameDoesNotExist(addedUserUsername)) {
             return new UserChatCreationResponseDto(
-                    List.of(String.format("User with id of %s does not exist", userId))
+                    List.of(String.format("User with username of %s does not exist", addedUserUsername))
             );
         }
         if (!isEligibleToUpdateChat(creatorUsername, chatId)) {
@@ -202,14 +202,14 @@ public class ChatFacadeImpl implements ChatFacade {
         }
 
         UserChat userChat = userChatService.createUserChat(new UserChatCreationParams(
-                userId,
+                addedUserUsername,
                 chatId,
                 userChatRoleType
         ));
 
         UserChatCreationResponseDto responseDto = new UserChatCreationResponseDto(
                 creatorUsername,
-                userId,
+                addedUserUsername,
                 chatId,
                 userChatRoleType,
                 LocalDateTime.now()
@@ -249,7 +249,7 @@ public class ChatFacadeImpl implements ChatFacade {
         UserChatRetrievalResponseDto responseDto = new UserChatRetrievalResponseDto(
                 requestingUsername,
                 chatId,
-                allUsersInChatWithId.stream().map(user -> new UserChatCreationParams(user.getId(), chatId, user.getUserChatRoleType())).collect(Collectors.toList())
+                allUsersInChatWithId.stream().map(user -> new UserChatCreationParams(user.getUser().getUsername(), chatId, user.getUserChatRoleType())).collect(Collectors.toList())
         );
 
         LOGGER.info("Successfully retrieved all users in chat according to the UserChatRetrievalRequestDto - {}, result - {}", requestDto, responseDto);

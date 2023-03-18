@@ -7,16 +7,16 @@ import java.util.Objects;
 public class UserChatCreationRequestDto {
 
     private String creatorUsername;
-    private Long userId;
+    private String addedUserUsername;
     private Long chatId;
     private UserChatRoleType userChatRoleType;
 
     public UserChatCreationRequestDto() {
     }
 
-    public UserChatCreationRequestDto(String creatorUsername, Long userId, Long chatId, UserChatRoleType userChatRoleType) {
+    public UserChatCreationRequestDto(String creatorUsername, String addedUserUsername, Long chatId, UserChatRoleType userChatRoleType) {
         this.creatorUsername = creatorUsername;
-        this.userId = userId;
+        this.addedUserUsername = addedUserUsername;
         this.chatId = chatId;
         this.userChatRoleType = userChatRoleType;
     }
@@ -29,12 +29,12 @@ public class UserChatCreationRequestDto {
         this.creatorUsername = creatorUsername;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getAddedUserUsername() {
+        return addedUserUsername;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setAddedUserUsername(String addedUserUsername) {
+        this.addedUserUsername = addedUserUsername;
     }
 
     public Long getChatId() {
@@ -58,19 +58,19 @@ public class UserChatCreationRequestDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserChatCreationRequestDto that = (UserChatCreationRequestDto) o;
-        return Objects.equals(creatorUsername, that.creatorUsername) && Objects.equals(userId, that.userId) && Objects.equals(chatId, that.chatId) && userChatRoleType == that.userChatRoleType;
+        return Objects.equals(creatorUsername, that.creatorUsername) && Objects.equals(addedUserUsername, that.addedUserUsername) && Objects.equals(chatId, that.chatId) && userChatRoleType == that.userChatRoleType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(creatorUsername, userId, chatId, userChatRoleType);
+        return Objects.hash(creatorUsername, addedUserUsername, chatId, userChatRoleType);
     }
 
     @Override
     public String toString() {
         return "UserChatCreationRequestDto{" +
                 "creatorUsername='" + creatorUsername + '\'' +
-                ", userId=" + userId +
+                ", addedUserUsername='" + addedUserUsername + '\'' +
                 ", chatId=" + chatId +
                 ", userChatRoleType=" + userChatRoleType +
                 '}';
