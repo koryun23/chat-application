@@ -159,7 +159,6 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", secondName='" + secondName + '\'' +
                 ", joinedAt=" + joinedAt +
-                ", userChats=" + userChats +
                 ", messagesSentToUser=" + messagesSentToUser +
                 ", messagesSentByUser=" + messagesSentByUser +
                 '}';
