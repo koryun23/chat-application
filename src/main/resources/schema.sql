@@ -66,7 +66,7 @@ create sequence user_sequence start 1 increment 50
 
     create table chats (
        id int8 not null,
-        chat_type int4 not null,
+        chat_type varchar(20) not null,
         created_at timestamp not null,
         chat_name varchar(255) not null,
         primary key (id)
