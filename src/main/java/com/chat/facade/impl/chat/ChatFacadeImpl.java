@@ -67,6 +67,30 @@ public class ChatFacadeImpl implements ChatFacade {
                     return new ChatCreationResponseDto(List.of("Chat already exists"));
                 }
             }
+
+            Chat chat = chatService.createChat(chatCreationRequestDtoToChatCreationParamsMapper.apply(requestDto));
+
+            UserChat firstUserChat = userChatService.createUserChat(new UserChatCreationParams(
+                    firstOptionalUser.get().getUsername(),
+                    chat.getId(),
+                    UserChatRoleType.CHAT_ADMIN
+            ));
+            UserChat secondUserChat = userChatService.createUserChat(new UserChatCreationParams(
+                    secondOptionalUser.get().getUsername(),
+                    chat.getId(),
+                    UserChatRoleType.CHAT_ADMIN
+            ));
+
+            ChatCreationResponseDto responseDto = new ChatCreationResponseDto(
+                    chat.getId(),
+                    chat.getName(),
+                    chat.getChatType(),
+                    chat.getCreatedAt(),
+                    requestDto.getCreatorUsername()
+            );
+            LOGGER.info("Successfully created a chat according to the ChatCreationRequestDto - {}, result - {}", requestDto, responseDto);
+            return responseDto;
+
         }
         if(chatService.findByName(requestDto.getName()).isPresent()) {
             return new ChatCreationResponseDto(List.of(String.format("Chat name %s is already taken", requestDto.getName())));
@@ -82,12 +106,14 @@ public class ChatFacadeImpl implements ChatFacade {
                 userChatRoleType
         ));
 
+
+
         ChatCreationResponseDto responseDto = new ChatCreationResponseDto(
                 chat.getId(),
                 chat.getName(),
                 chat.getChatType(),
                 chat.getCreatedAt(),
-                userInChat.getUser().getUsername()
+                requestDto.getCreatorUsername()
         );
 
         LOGGER.info("Successfully created a {} chat according to the chat creation request dto - {}, result - {}", chat.getChatType(), requestDto, responseDto);
