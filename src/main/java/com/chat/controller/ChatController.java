@@ -1,12 +1,7 @@
 package com.chat.controller;
 
-import com.chat.dto.request.ChatCreationRequestDto;
-import com.chat.dto.request.ChatDeletionRequestDto;
-import com.chat.dto.request.ChatUpdateRequestDto;
-import com.chat.dto.response.ChatCreationResponseDto;
-import com.chat.dto.response.ChatDeletionResponseDto;
-import com.chat.dto.response.ChatUpdateResponseDto;
-import com.chat.dto.response.UserChatRetrievalResponseDto;
+import com.chat.dto.request.*;
+import com.chat.dto.response.*;
 import com.chat.facade.core.chat.ChatFacade;
 import com.chat.handler.HttpServletRequestHandler;
 import io.jsonwebtoken.lang.Assert;
@@ -52,9 +47,23 @@ public class ChatController {
     }
 
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<ChatUpdateResponseDto> update(@PathVariable Long id, ChatUpdateRequestDto requestDto, HttpServletRequest request) {
+    public ResponseEntity<ChatUpdateResponseDto> update(@PathVariable Long id, @RequestBody ChatUpdateRequestDto requestDto, HttpServletRequest request) {
         requestDto.setChatId(id);
         ChatUpdateResponseDto responseDto = chatFacade.updateChat(requestDto);
+
+        if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<ChatListRetrievalResponseDto> getAll(HttpServletRequest request) {
+        ChatListRetrievalResponseDto responseDto = chatFacade.retrieveAllChats(new ChatListRetrievalRequestDto(
+                httpServletRequestHandler.extractUsername(request),
+                ""
+        ));
 
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);

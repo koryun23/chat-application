@@ -53,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/chat/create").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/chat/delete/**").hasAnyAuthority("APP_SUPERADMIN", "CHAT_OWNER")
                 .antMatchers(HttpMethod.PUT, "/chat/update/**").hasAnyAuthority("APP_SUPERADMIN", "CHAT_OWNER", "CHAT_ADMIN")
+                .antMatchers(HttpMethod.GET, "/chat").permitAll()
                 .antMatchers(HttpMethod.PUT, "/user-chat/update/**").hasAnyAuthority("APP_SUPERADMIN", "CHAT_OWNER", "CHAT_ADMIN")
                 .antMatchers(HttpMethod.POST, "/user-chat/create").hasAnyAuthority("APP_SUPERADMIN", "CHAT_OWNER", "CHAT_ADMIN")
                 .antMatchers(HttpMethod.GET, "/user-chat").permitAll()

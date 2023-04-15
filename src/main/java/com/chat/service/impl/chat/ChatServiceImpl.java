@@ -1,6 +1,7 @@
 package com.chat.service.impl.chat;
 
 import com.chat.entity.chat.Chat;
+import com.chat.entity.chat.UserChat;
 import com.chat.entity.chat.type.ChatType;
 import com.chat.exceptions.ChatNotFoundException;
 import com.chat.mapper.core.chat.ChatCreationParamsToChatMapper;
@@ -136,5 +137,25 @@ public class ChatServiceImpl implements ChatService {
         LOGGER.info("Successfully retrieved a chat optional with a name of {}, result - {}", name, chatOptional);
 
         return chatOptional;
+    }
+
+    @Override
+    public List<Chat> findAllByUserUsername(String username) {
+        Assert.notNull(username, "Username must not be null");
+        LOGGER.info("Retrieving all chats that contain the user {}", username);
+
+        List<Chat> allByUsername = chatRepository.findAll();
+        List<Chat> result = new LinkedList<>();
+
+        for(Chat chat : allByUsername) {
+            for(UserChat userChat : chat.getUsersInChat()) {
+                if(userChat.getUser().getUsername().equals(username)) {
+                    result.add(chat);
+                }
+            }
+        }
+
+        LOGGER.info("Successfully retrieved all chats that contain the user {}, result - {}", username, result);
+        return result;
     }
 }

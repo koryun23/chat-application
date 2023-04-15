@@ -304,6 +304,34 @@ public class ChatFacadeImpl implements ChatFacade {
         return responseDto;
     }
 
+    @Override
+    public ChatListRetrievalResponseDto retrieveAllChats(ChatListRetrievalRequestDto requestDto) {
+        Assert.notNull(requestDto, "ChatListRetrievalRequestDto must not be null");
+        LOGGER.info("Retrieving all chats according to the ChatListRetrievalRequestDto - {}", requestDto);
+
+        String retrieverUsername = requestDto.getRetrieverUsername();
+
+        if(userWithUsernameDoesNotExist(retrieverUsername)) {
+            return new ChatListRetrievalResponseDto(List.of(
+                    String.format("User with username %s does not exist", retrieverUsername)
+            ));
+        }
+
+        List<Chat> allByUsername = chatService.findAllByUserUsername(retrieverUsername);
+
+        LOGGER.debug("all chats of user with username of {} - {}", retrieverUsername, allByUsername);
+
+        ChatListRetrievalResponseDto responseDto = new ChatListRetrievalResponseDto(
+                retrieverUsername,
+                "",
+                allByUsername.stream().map(chat -> new ChatDto(chat.getName(), chat.getChatType(), chat.getCreatedAt())).collect(Collectors.toList()),
+                LocalDateTime.now()
+        );
+
+        LOGGER.info("Successfully retrieved all chats according to the ChatListRetrievalRequestDto - {}, result - {}", requestDto, responseDto);
+        return responseDto;
+    }
+
     private boolean userWithUsernameDoesNotExist(String username) {
         return userService.findByUsername(username).isEmpty();
     }

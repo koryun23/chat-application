@@ -16,4 +16,6 @@ public interface ChatFacade {
     UserChatCreationResponseDto createUserChat(UserChatCreationRequestDto requestDto);
 
     UserChatRetrievalResponseDto retrieveUsersInChat(UserChatRetrievalRequestDto requestDto);
+
+    ChatListRetrievalResponseDto retrieveAllChats(ChatListRetrievalRequestDto requestDto);
 }
