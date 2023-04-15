@@ -57,7 +57,7 @@ public class ChatFacadeImpl implements ChatFacade {
             Optional<User> firstOptionalUser = userService.findByUsername(usernamesFromChatName.get(0));
             Optional<User> secondOptionalUser = userService.findByUsername(usernamesFromChatName.get(1));
             if(firstOptionalUser.isEmpty() || secondOptionalUser.isEmpty()) {
-                return new ChatCreationResponseDto(List.of(String.format("Chat name %s is not valid", name)));
+                return new ChatCreationResponseDto(List.of(String.format("One of the provided usernames(%s, %s) is not valid", usernamesFromChatName.get(0), usernamesFromChatName.get(1))));
             }
 
             List<Long> firstUserChatIds = userChatService.getAllByUserId(firstOptionalUser.get().getId()).stream().map(UserChat::getChat).map(Chat::getId).collect(Collectors.toList());
@@ -105,8 +105,6 @@ public class ChatFacadeImpl implements ChatFacade {
                 chat.getId(),
                 userChatRoleType
         ));
-
-
 
         ChatCreationResponseDto responseDto = new ChatCreationResponseDto(
                 chat.getId(),
