@@ -11,6 +11,7 @@ import com.chat.dto.response.ChatListRetrievalResponseDto;
 import com.chat.dto.response.SearchResponseDto;
 import com.chat.dto.response.UserListRetrievalResponseDto;
 import com.chat.entity.chat.Chat;
+import com.chat.entity.chat.UserChat;
 import com.chat.entity.user.User;
 import com.chat.facade.core.search.SearchFacade;
 import com.chat.service.core.chat.ChatService;
@@ -109,7 +110,7 @@ public class SearchFacadeImpl implements SearchFacade {
         }
 
         User user = optionalUser.get();
-        List<ChatDto> chatDtos = userChatService.getAllByUserId(user.getId()).stream().map(userChat -> chatService.getById(userChat.getChat().getId())).collect(Collectors.toList()).stream().map(chat -> new ChatDto(chat.getName(), chat.getChatType(), chat.getCreatedAt())).collect(Collectors.toList());
+        List<ChatDto> chatDtos = userChatService.getAllByUserId(user.getId()).stream().map(UserChat::getChat).collect(Collectors.toList()).stream().map(chat -> new ChatDto(chat.getName(), chat.getChatType(), chat.getCreatedAt())).collect(Collectors.toList());
         AllChatsRetrievalResponseDto responseDto = new AllChatsRetrievalResponseDto(user.getId(), chatDtos, LocalDateTime.now());
 
         LOGGER.info("Successfully retrieved all chats of a user according to the ChatListRetrievalRequestDto - {}, result - {}", requestDto, responseDto);

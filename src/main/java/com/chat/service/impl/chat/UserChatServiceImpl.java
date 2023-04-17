@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,8 +104,15 @@ public class UserChatServiceImpl implements UserChatService {
     public List<UserChat> getAllByUserId(Long userId) {
         LOGGER.info("Retrieving all chats of user with an id of {}", userId);
         Assert.notNull(userId, "User id must not be null");
-        List<UserChat> allByUserId = userChatRepository.findAllByUserId(userId);
-        LOGGER.info("Successfully retrieved all chats of user with an if of {}, result - {}", userId, allByUserId);
-        return allByUserId;
+        List<UserChat> all = userChatRepository.findAll();
+        List<UserChat> result = new LinkedList<>();
+
+        for(UserChat userChat : all) {
+            if(userChat.getUser().getId().equals(userId)) {
+                result.add(userChat);
+            }
+        }
+        LOGGER.info("Successfully retrieved all chats of user with an if of {}, result - {}", userId, result);
+        return result;
     }
 }
