@@ -10,6 +10,4 @@ import java.util.List;
 public interface UserChatRepository extends JpaRepository<UserChat, Long> {
 
     List<UserChat> findAllByChatId(Long id);
-
-    List<UserChat> findAllByUserId(Long userId);
 }

@@ -60,8 +60,8 @@ public class ChatFacadeImpl implements ChatFacade {
                 return new ChatCreationResponseDto(List.of(String.format("One of the provided usernames(%s, %s) is not valid", usernamesFromChatName.get(0), usernamesFromChatName.get(1))));
             }
 
-            List<Long> firstUserChatIds = userChatService.getAllByUserId(firstOptionalUser.get().getId()).stream().map(UserChat::getChat).map(Chat::getId).collect(Collectors.toList());
-            Set<Long> secondUserChatIds = userChatService.getAllByUserId(secondOptionalUser.get().getId()).stream().map(UserChat::getChat).map(Chat::getId).collect(Collectors.toSet());
+            List<Long> firstUserChatIds = userChatService.getAllUserChatsByUserId(firstOptionalUser.get().getId()).stream().map(UserChat::getChat).map(Chat::getId).collect(Collectors.toList());
+            Set<Long> secondUserChatIds = userChatService.getAllUserChatsByUserId(secondOptionalUser.get().getId()).stream().map(UserChat::getChat).map(Chat::getId).collect(Collectors.toSet());
             for(Long id : firstUserChatIds) {
                 if(secondUserChatIds.contains(id) && chatService.getById(id).getChatType() == ChatType.PERSONAL) {
                     return new ChatCreationResponseDto(List.of("Chat already exists"));

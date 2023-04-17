@@ -12,6 +12,7 @@ import com.chat.dto.response.SearchResponseDto;
 import com.chat.dto.response.UserListRetrievalResponseDto;
 import com.chat.entity.chat.Chat;
 import com.chat.entity.chat.UserChat;
+import com.chat.entity.chat.type.ChatType;
 import com.chat.entity.user.User;
 import com.chat.facade.core.search.SearchFacade;
 import com.chat.service.core.chat.ChatService;
@@ -110,7 +111,7 @@ public class SearchFacadeImpl implements SearchFacade {
         }
 
         User user = optionalUser.get();
-        List<ChatDto> chatDtos = userChatService.getAllByUserId(user.getId()).stream().map(UserChat::getChat).collect(Collectors.toList()).stream().map(chat -> new ChatDto(chat.getName(), chat.getChatType(), chat.getCreatedAt())).collect(Collectors.toList());
+        List<ChatDto> chatDtos = userChatService.getAllUserChatsByUserId(user.getId()).stream().map(UserChat::getChat).map(chat -> new ChatDto(chat.getName(), chat.getChatType(), chat.getCreatedAt())).collect(Collectors.toList());
         AllChatsRetrievalResponseDto responseDto = new AllChatsRetrievalResponseDto(user.getId(), chatDtos, LocalDateTime.now());
 
         LOGGER.info("Successfully retrieved all chats of a user according to the ChatListRetrievalRequestDto - {}, result - {}", requestDto, responseDto);
@@ -129,14 +130,25 @@ public class SearchFacadeImpl implements SearchFacade {
             return new ChatListRetrievalResponseDto(List.of(String.format("No user found having a username of %s", retrieverUsername)));
         }
 
-        List<ChatDto> chatDtoList = chatService.findChatsWithSimilarNames(keyWord).stream()
-                .map(chat -> (
-                        new ChatDto(
-                                chat.getName(),
-                                chat.getChatType(),
-                                chat.getCreatedAt()
-                        )
-                )).collect(Collectors.toList());
+        List<Chat> chatList = chatService.findChatsWithSimilarNames(keyWord);
+        List<ChatDto> chatDtoList = new LinkedList<>();
+
+        for(Chat chat : chatList) {
+            List<String> usernames = chat.getUsersInChat().stream().map(userChat -> userChat.getUser().getUsername()).collect(Collectors.toList());
+            if(chat.getChatType() == ChatType.PERSONAL) {
+                String otherThanRetrieverUsername = usernames.get(0).equals(retrieverUsername) ? usernames.get(1) : usernames.get(0);
+                if(!otherThanRetrieverUsername.contains(keyWord)) {
+                    continue;
+                }
+            }
+            if(usernames.contains(retrieverUsername)) {
+                chatDtoList.add(new ChatDto(
+                        chat.getName(),
+                        chat.getChatType(),
+                        chat.getCreatedAt()
+                ));
+            }
+        }
 
         ChatListRetrievalResponseDto responseDto = new ChatListRetrievalResponseDto(
                 retrieverUsername,

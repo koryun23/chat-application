@@ -1,5 +1,6 @@
 package com.chat.service.impl.chat;
 
+import com.chat.entity.chat.Chat;
 import com.chat.entity.chat.UserChat;
 import com.chat.exceptions.ChatNotFoundException;
 import com.chat.exceptions.UserChatNotFoundException;
@@ -101,7 +102,7 @@ public class UserChatServiceImpl implements UserChatService {
     }
 
     @Override
-    public List<UserChat> getAllByUserId(Long userId) {
+    public List<UserChat> getAllUserChatsByUserId(Long userId) {
         LOGGER.info("Retrieving all chats of user with an id of {}", userId);
         Assert.notNull(userId, "User id must not be null");
         List<UserChat> all = userChatRepository.findAll();
