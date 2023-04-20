@@ -7,7 +7,7 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+
 public class MessageReceiverServiceJMSImpl implements MessageReceiverService {
 
     @Transactional

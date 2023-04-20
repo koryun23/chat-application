@@ -160,4 +160,19 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Successfully retrieved all users having a username similar to {}, result - {}", username, usersWithSimilarUsernames);
         return usersWithSimilarUsernames;
     }
+
+    @Override
+    public Optional<User> findByUsernameAndPassword(String username, String encodedPassword) {
+        LOGGER.info("Retrieving an optional user with a username and password");
+        Assert.notNull(username, "Username must not be null");
+        Assert.hasText(username, "Username must not be empty");
+        Assert.notNull(encodedPassword, "Password must not be null");
+        Assert.hasText(encodedPassword, "Password must not be empty");
+
+        Optional<User> byUsernameAndPassword = userRepository.findByUsernameAndPassword(username, encodedPassword);
+
+        LOGGER.info("Successfully retrieved an optional user with a username and password, result - {}", byUsernameAndPassword);
+        return byUsernameAndPassword;
+
+    }
 }

@@ -59,8 +59,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/user-chat").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/search/**").permitAll()
-                .antMatchers("/message").permitAll()
-                .antMatchers("/private-message").permitAll()
+                .antMatchers("/app/**").permitAll()
+                .antMatchers("/ws/**").permitAll()
                 .anyRequest()
                 .authenticated();
     }
@@ -88,7 +88,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 HttpMethod.PUT.name(),
                 HttpMethod.DELETE.name()
         ));
+
         corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }

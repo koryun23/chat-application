@@ -7,8 +7,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-@Service
 public class MessageSenderServiceJMSImpl implements MessageSenderService {
 
     private final JmsTemplate jmsTemplate;

@@ -24,4 +24,6 @@ public interface UserService {
     List<User> findUsersWithSimilarSecondNames(String secondName);
 
     List<User> findUsersWithSimilarUsernames(String username);
+
+    Optional<User> findByUsernameAndPassword(String username, String password);
 }

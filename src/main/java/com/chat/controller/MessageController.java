@@ -1,42 +1,57 @@
 package com.chat.controller;
 
+import com.chat.dto.request.SendNotificationRequestDto;
 import com.chat.dto.request.SendPrivateMessageRequestDto;
 import com.chat.dto.request.SendPublicMessageRequestDto;
+import com.chat.dto.response.SendNotificationResponseDto;
 import com.chat.dto.response.SendPrivateMessageResponseDto;
 import com.chat.dto.response.SendPublicMessageResponseDto;
 import com.chat.facade.impl.message.MessageFacadeImpl;
+import com.chat.handler.HttpServletRequestHandler;
 import io.jsonwebtoken.lang.Assert;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-@RestController
-@RequestMapping(path = "app", consumes = "application/json", produces = "application/json")
+@Controller
+//@RequestMapping(path = "app", consumes = "application/json", produces = "application/json")
 public class MessageController {
 
     private final MessageFacadeImpl messageFacade;
+    private final HttpServletRequestHandler httpServletRequestHandler;
 
-    public MessageController(MessageFacadeImpl messageFacade, SimpMessagingTemplate simpMessagingTemplate) {
+    public MessageController(MessageFacadeImpl messageFacade, SimpMessagingTemplate simpMessagingTemplate, HttpServletRequestHandler httpServletRequestHandler) {
         Assert.notNull(messageFacade, "Message Facade must not be null");
+        Assert.notNull(httpServletRequestHandler, "Http servlet request handler must not be null");
         this.messageFacade = messageFacade;
+        this.httpServletRequestHandler = httpServletRequestHandler;
     }
 
-    @MessageMapping("/message")
-    @SendTo("/chatroom/public")
+    @MessageMapping("/public-message") // /app/message
+    //@SendTo("/chatroom/{chatName}")
     public SendPublicMessageResponseDto receivePublicMessage(@Payload SendPublicMessageRequestDto requestDto, HttpServletRequest request) {
-        // when receiving a public message on the /message mapping, the message is being SENT to the /chatroom/public mapping
-        return messageFacade.sendPublicMessage(requestDto, request);
+        // when receiving a public message on the /message mapping, the message is being SENT to the /chatroom/{chatName} mapping
+        requestDto.setSentBy(httpServletRequestHandler.extractUsername(request));
+        return messageFacade.sendPublicMessage(requestDto);
     }
 
-    @MessageMapping("/private-message")
+    @MessageMapping("/private-message") // app/private-message
     public SendPrivateMessageResponseDto receivePrivateMessage(@Payload SendPrivateMessageRequestDto requestDto, HttpServletRequest request) {
         // when receiving a private message on the mapping /private-message, it is being SENT to the appropriate user
-        return messageFacade.sendPrivateMessage(requestDto, request);
+        System.out.println("Entering the receivePrivateMessage method");
+        requestDto.setSentBy(httpServletRequestHandler.extractUsername(request));
+        return messageFacade.sendPrivateMessage(requestDto);
+    }
+
+    @MessageMapping("/notification")
+    public SendNotificationResponseDto receiveNotification(@Payload SendNotificationRequestDto requestDto) {
+        return messageFacade.sendNotification(requestDto);
     }
 }
