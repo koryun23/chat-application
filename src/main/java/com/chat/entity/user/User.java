@@ -159,8 +159,6 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", secondName='" + secondName + '\'' +
                 ", joinedAt=" + joinedAt +
-                ", messagesSentToUser=" + messagesSentToUser +
-                ", messagesSentByUser=" + messagesSentByUser +
                 '}';
     }
 }

@@ -33,6 +33,7 @@ public class UserMessage {
     )
     private Message message;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "message_status_type", nullable = false)
     private MessageStatusType messageStatusType;
 

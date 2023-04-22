@@ -1,7 +1,7 @@
 package com.chat.entity.message.type;
 
 public enum MessageStatusType {
-    RECEIVED,
+    NOT_RECEIVED,
     SEEN,
     UNSEEN
 }

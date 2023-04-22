@@ -6,11 +6,14 @@ import com.chat.dto.request.SendPublicMessageRequestDto;
 import com.chat.dto.response.SendNotificationResponseDto;
 import com.chat.dto.response.SendPrivateMessageResponseDto;
 import com.chat.dto.response.SendPublicMessageResponseDto;
+import com.chat.entity.chat.Chat;
+import com.chat.entity.message.Message;
+import com.chat.entity.message.type.MessageStatusType;
 import com.chat.facade.core.message.MessageFacade;
 import com.chat.handler.HttpServletRequestHandler;
+import com.chat.service.core.chat.ChatService;
 import com.chat.service.core.jwt.JwtService;
-import com.chat.service.core.message.persist.MessageCreationParams;
-import com.chat.service.core.message.persist.MessagePersistenceService;
+import com.chat.service.core.message.persist.*;
 import com.chat.service.core.message.receiver.MessageReceiverService;
 import com.chat.service.core.message.sender.MessageSenderService;
 import com.chat.service.core.message.sender.PrivateMessageCreationParams;
@@ -21,28 +24,45 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Component
 public class MessageFacadeImpl implements MessageFacade {
 
     private final MessagePersistenceService messagePersistenceService;
+    private final ChatMessagePersistenceService chatMessagePersistenceService;
+    private final UserMessagePersistenceService userMessagePersistenceService;
     private final MessageSenderService messageSenderService;
     private final MessageReceiverService messageReceiverService;
+    private final ChatService chatService;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final JwtService jwtService;
     private final HttpServletRequestHandler httpServletRequestHandler;
     private final Logger LOGGER = LoggerFactory.getLogger(MessageFacadeImpl.class);
 
-    public MessageFacadeImpl(MessagePersistenceService messagePersistenceService, MessageSenderService messageSenderService, MessageReceiverService messageReceiverService, SimpMessagingTemplate simpMessagingTemplate, JwtService jwtService, HttpServletRequestHandler httpServletRequestHandler) {
+    public MessageFacadeImpl(MessagePersistenceService messagePersistenceService,
+                             ChatMessagePersistenceService chatMessagePersistenceService,
+                             UserMessagePersistenceService userMessagePersistenceService, MessageSenderService messageSenderService,
+                             MessageReceiverService messageReceiverService,
+                             ChatService chatService,
+                             SimpMessagingTemplate simpMessagingTemplate,
+                             JwtService jwtService,
+                             HttpServletRequestHandler httpServletRequestHandler) {
         Assert.notNull(messagePersistenceService, "Message Persistence Service must not be null");
+        Assert.notNull(chatMessagePersistenceService, "ChatMessagePersistenceService must not be null");
+        Assert.notNull(userMessagePersistenceService, "UserMessagePersistenceService must not be null");
         Assert.notNull(messageReceiverService, "Message Receiver Service must not be null");
         Assert.notNull(messageSenderService, "Message Sender Service must not be null");
+        Assert.notNull(chatService, "ChatService must not be null");
         Assert.notNull(simpMessagingTemplate, "Simple Messaging Template must not be null");
         Assert.notNull(jwtService, "Jwt Service must not be null");
         Assert.notNull(httpServletRequestHandler, "Http servlet request handler must not be null");
         this.messagePersistenceService = messagePersistenceService;
+        this.chatMessagePersistenceService = chatMessagePersistenceService;
+        this.userMessagePersistenceService = userMessagePersistenceService;
         this.messageSenderService = messageSenderService;
         this.messageReceiverService = messageReceiverService;
+        this.chatService = chatService;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.jwtService = jwtService;
         this.httpServletRequestHandler = httpServletRequestHandler;
@@ -60,10 +80,24 @@ public class MessageFacadeImpl implements MessageFacade {
                 LocalDateTime.now()
         ));
 
-        messagePersistenceService.create(new MessageCreationParams(
+        Message message = messagePersistenceService.create(new MessageCreationParams(
                 requestDto.getMessage(),
                 requestDto.getSentBy(),
                 LocalDateTime.now()
+        ));
+
+        Optional<Chat> chatOptional = chatService.findByName(requestDto.getSentBy() + " - " + requestDto.getSentTo());
+        Chat chat = chatOptional.orElseGet(() -> chatService.getByName(requestDto.getSentTo() + " - " + requestDto.getSentBy()));
+        System.out.println(chat.getName());
+        chatMessagePersistenceService.create(new ChatMessageCreationParams(
+                chat.getId(),
+                message.getId()
+        ));
+
+        userMessagePersistenceService.create(new UserMessageCreationParams(
+                requestDto.getSentTo(),
+                message.getId(),
+                MessageStatusType.UNSEEN
         ));
 
         SendPrivateMessageResponseDto responseDto = new SendPrivateMessageResponseDto(
@@ -92,6 +126,7 @@ public class MessageFacadeImpl implements MessageFacade {
                 requestDto.getSentBy(),
                 LocalDateTime.now()
         ));
+
 
         SendPublicMessageResponseDto responseDto = new SendPublicMessageResponseDto(
                 requestDto.getMessage(),

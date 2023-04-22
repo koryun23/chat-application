@@ -32,7 +32,7 @@ public class ChatMessagePersistenceServiceImpl implements ChatMessagePersistence
         Assert.notNull(params, "Chat Message Creation Params must not be null");
         ChatMessage chatMessage = chatMessageRepository.save(new ChatMessage(
                 chatService.getById(params.getChatId()),
-                messagePersistenceService.getById(params.getChatId())
+                messagePersistenceService.getById(params.getMessageId())
         ));
         LOGGER.info("Successfully created a Chat Message according to the Chat Message Creation Params - {}, result - {}", params, chatMessage);
         return chatMessage;

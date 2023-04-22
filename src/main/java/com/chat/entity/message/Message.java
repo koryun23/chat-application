@@ -36,6 +36,9 @@ public class Message {
     @OneToOne(mappedBy = "message", cascade = CascadeType.PERSIST)
     private UserMessage userMessage;
 
+    public Message() {
+    }
+
     public Message(String body, User sentBy, LocalDateTime sentAt) {
         this.body = body;
         this.sentBy = sentBy;
@@ -102,7 +105,6 @@ public class Message {
                 ", body='" + body + '\'' +
                 ", sentBy='" + sentBy + '\'' +
                 ", sentAt=" + sentAt +
-                ", messageInChat=" + messageInChat +
                 '}';
     }
 }
