@@ -111,6 +111,7 @@ public class MessageFacadeImpl implements MessageFacade {
         return responseDto;
     }
 
+    @Override
     public SendPublicMessageResponseDto sendPublicMessage(SendPublicMessageRequestDto requestDto) {
         LOGGER.info("Sending a public message according to Send Public Message Request dto - {}", requestDto);
         Assert.notNull(requestDto, "Send Public Message Request Dto must not be null");
