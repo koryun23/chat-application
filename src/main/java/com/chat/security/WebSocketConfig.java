@@ -1,12 +1,15 @@
-package com.chat.config;
+package com.chat.security;
 
 import com.chat.entity.user.User;
+import com.chat.security.AuthChannelInterceptorAdapter;
 import com.chat.service.core.chat.UserChatService;
 import com.chat.service.core.jwt.JwtService;
 import com.chat.service.core.user.UserService;
 import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -25,15 +28,18 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import java.security.Principal;
 
 @Configuration
+@Order(Ordered.HIGHEST_PRECEDENCE + 99)
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private JwtService jwtService;
-    private UserService userService;
+    private final JwtService jwtService;
+    private final UserService userService;
+    private final AuthChannelInterceptorAdapter authChannelInterceptorAdapter;
 
-    public WebSocketConfig(JwtService jwtService, UserService userService) {
+    public WebSocketConfig(JwtService jwtService, UserService userService, AuthChannelInterceptorAdapter authChannelInterceptorAdapter) {
         this.jwtService = jwtService;
         this.userService = userService;
+        this.authChannelInterceptorAdapter = authChannelInterceptorAdapter;
     }
 
     @Override
@@ -48,7 +54,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setUserDestinationPrefix("/user");
     }
 
-
-
-
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(authChannelInterceptorAdapter);
+    }
 }

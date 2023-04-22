@@ -6,6 +6,7 @@ import com.chat.mapper.core.message.MessageCreationParamsToMessageMapper;
 import com.chat.repository.MessageRepository;
 import com.chat.service.core.message.persist.MessageCreationParams;
 import com.chat.service.core.message.persist.MessagePersistenceService;
+import com.chat.service.core.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,11 @@ public class MessagePersistenceServiceImpl implements MessagePersistenceService 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessagePersistenceServiceImpl.class);
     private final MessageRepository messageRepository;
-    private final MessageCreationParamsToMessageMapper messageCreationParamsToMessageMapper;
+    private final UserService userService;
 
-    public MessagePersistenceServiceImpl(MessageRepository messageRepository, MessageCreationParamsToMessageMapper messageCreationParamsToMessageMapper) {
+    public MessagePersistenceServiceImpl(MessageRepository messageRepository, UserService userService) {
         this.messageRepository = messageRepository;
-        this.messageCreationParamsToMessageMapper = messageCreationParamsToMessageMapper;
+        this.userService = userService;
     }
 
     @Transactional
@@ -29,7 +30,13 @@ public class MessagePersistenceServiceImpl implements MessagePersistenceService 
     public Message create(MessageCreationParams params) {
         LOGGER.info("Creating a message according to the Message Creation Params - {}", params);
         Assert.notNull(params, "Message Creation Params must not be null");
-        Message message = messageRepository.save(messageCreationParamsToMessageMapper.apply(params));
+        Message message = messageRepository.save(
+            new Message(
+                    params.getBody(),
+                    userService.getByUsername(params.getSentBy()),
+                    params.getSentAt()
+            )
+        );
         LOGGER.info("Successfully created a message according to the Message Creation Params - {}, result - {}", params, message);
         return message;
     }

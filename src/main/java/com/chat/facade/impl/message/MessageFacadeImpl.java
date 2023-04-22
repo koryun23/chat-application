@@ -62,6 +62,7 @@ public class MessageFacadeImpl implements MessageFacade {
 
         messagePersistenceService.create(new MessageCreationParams(
                 requestDto.getMessage(),
+                requestDto.getSentBy(),
                 LocalDateTime.now()
         ));
 
@@ -88,6 +89,7 @@ public class MessageFacadeImpl implements MessageFacade {
 
         messagePersistenceService.create(new MessageCreationParams(
                 requestDto.getMessage(),
+                requestDto.getSentBy(),
                 LocalDateTime.now()
         ));
 

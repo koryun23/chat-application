@@ -46,13 +46,13 @@ public class Config {
         return factory;
     }
 
-    /*@Bean
+    @Bean
     public MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
         return converter;
-    }*/
+    }
 
     // the bean defined below will be used in sending a message to a single client (e.g. in personal chats)
     @Bean

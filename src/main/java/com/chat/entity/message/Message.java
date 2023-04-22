@@ -36,8 +36,9 @@ public class Message {
     @OneToOne(mappedBy = "message", cascade = CascadeType.PERSIST)
     private UserMessage userMessage;
 
-    public Message(String body, LocalDateTime sentAt) {
+    public Message(String body, User sentBy, LocalDateTime sentAt) {
         this.body = body;
+        this.sentBy = sentBy;
         this.sentAt = sentAt;
     }
 
@@ -55,6 +56,14 @@ public class Message {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public User getSentBy() {
+        return sentBy;
+    }
+
+    public void setSentBy(User sentBy) {
+        this.sentBy = sentBy;
     }
 
     public LocalDateTime getSentAt() {
@@ -83,7 +92,7 @@ public class Message {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, body, sentAt, messageInChat);
+        return Objects.hash(id, body, sentBy, sentAt, messageInChat);
     }
 
     @Override
@@ -91,6 +100,7 @@ public class Message {
         return "Message{" +
                 "id=" + id +
                 ", body='" + body + '\'' +
+                ", sentBy='" + sentBy + '\'' +
                 ", sentAt=" + sentAt +
                 ", messageInChat=" + messageInChat +
                 '}';

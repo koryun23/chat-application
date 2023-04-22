@@ -10,9 +10,6 @@ public class MessageCreationParamsToMessageMapperImpl implements MessageCreation
 
     @Override
     public Message apply(MessageCreationParams messageCreationParams) {
-        return new Message(
-                messageCreationParams.getBody(),
-                messageCreationParams.getSentAt()
-        );
+        return null;
     }
 }

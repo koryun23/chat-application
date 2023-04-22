@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Controller
+@RestController
 //@RequestMapping(path = "app", consumes = "application/json", produces = "application/json")
 public class MessageController {
 
@@ -34,19 +34,20 @@ public class MessageController {
         this.httpServletRequestHandler = httpServletRequestHandler;
     }
 
-    @MessageMapping("/public-message") // /app/message
+    @MessageMapping("/public-message") // /message
     //@SendTo("/chatroom/{chatName}")
-    public SendPublicMessageResponseDto receivePublicMessage(@Payload SendPublicMessageRequestDto requestDto, HttpServletRequest request) {
+    public SendPublicMessageResponseDto receivePublicMessage(@Payload SendPublicMessageRequestDto requestDto) {
         // when receiving a public message on the /message mapping, the message is being SENT to the /chatroom/{chatName} mapping
-        requestDto.setSentBy(httpServletRequestHandler.extractUsername(request));
+        // requestDto.setSentBy(httpServletRequestHandler.extractUsername(request));
         return messageFacade.sendPublicMessage(requestDto);
     }
 
-    @MessageMapping("/private-message") // app/private-message
-    public SendPrivateMessageResponseDto receivePrivateMessage(@Payload SendPrivateMessageRequestDto requestDto, HttpServletRequest request) {
+    @MessageMapping("/private-message") // /private-message
+    public SendPrivateMessageResponseDto receivePrivateMessage(@Payload SendPrivateMessageRequestDto requestDto) {
         // when receiving a private message on the mapping /private-message, it is being SENT to the appropriate user
         System.out.println("Entering the receivePrivateMessage method");
-        requestDto.setSentBy(httpServletRequestHandler.extractUsername(request));
+        System.out.println("SendPrivateMessageRequestDto " + requestDto);
+        // requestDto.setSentBy(httpServletRequestHandler.extractUsername(request));
         return messageFacade.sendPrivateMessage(requestDto);
     }
 

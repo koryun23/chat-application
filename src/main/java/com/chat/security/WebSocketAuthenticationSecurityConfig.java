@@ -8,8 +8,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-@Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE + 99)
+//@Configuration
+//@Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketAuthenticationSecurityConfig implements WebSocketMessageBrokerConfigurer {
 
     private final AuthChannelInterceptorAdapter authChannelInterceptorAdapter;
@@ -19,8 +19,5 @@ public class WebSocketAuthenticationSecurityConfig implements WebSocketMessageBr
         this.authChannelInterceptorAdapter = authChannelInterceptorAdapter;
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(authChannelInterceptorAdapter);
-    }
+
 }
