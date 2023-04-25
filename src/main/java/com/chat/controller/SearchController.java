@@ -41,6 +41,6 @@ public class SearchController {
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseDto);
     }
 }
