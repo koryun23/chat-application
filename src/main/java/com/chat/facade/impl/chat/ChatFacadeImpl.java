@@ -324,7 +324,7 @@ public class ChatFacadeImpl implements ChatFacade {
         ChatListRetrievalResponseDto responseDto = new ChatListRetrievalResponseDto(
                 retrieverUsername,
                 "",
-                allByUsername.stream().map(chat -> new ChatDto(chat.getName(), chat.getChatType(), chat.getCreatedAt())).collect(Collectors.toList()),
+                allByUsername.stream().map(chat -> new ChatDto(chat.getId(), chat.getName(), chat.getChatType(), chat.getCreatedAt())).collect(Collectors.toList()),
                 LocalDateTime.now()
         );
 

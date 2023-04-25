@@ -32,7 +32,7 @@ public class ChatController {
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseDto);
     }
 
     @DeleteMapping(path = "/delete/{id}")
@@ -43,7 +43,7 @@ public class ChatController {
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseDto);
     }
 
     @PutMapping(path = "/update/{id}")
@@ -55,7 +55,7 @@ public class ChatController {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseDto);
     }
 
     @GetMapping
@@ -69,6 +69,6 @@ public class ChatController {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseDto);
     }
 }

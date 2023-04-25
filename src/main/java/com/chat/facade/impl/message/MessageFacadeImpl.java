@@ -1,12 +1,16 @@
 package com.chat.facade.impl.message;
 
+import com.chat.dto.plain.MessageDto;
+import com.chat.dto.request.MessagesInChatListRetrievalRequestDto;
 import com.chat.dto.request.SendNotificationRequestDto;
 import com.chat.dto.request.SendPrivateMessageRequestDto;
 import com.chat.dto.request.SendPublicMessageRequestDto;
+import com.chat.dto.response.MessagesInChatListRetrievalResponseDto;
 import com.chat.dto.response.SendNotificationResponseDto;
 import com.chat.dto.response.SendPrivateMessageResponseDto;
 import com.chat.dto.response.SendPublicMessageResponseDto;
 import com.chat.entity.chat.Chat;
+import com.chat.entity.message.ChatMessage;
 import com.chat.entity.message.Message;
 import com.chat.entity.message.type.MessageStatusType;
 import com.chat.facade.core.message.MessageFacade;
@@ -18,13 +22,16 @@ import com.chat.service.core.message.receiver.MessageReceiverService;
 import com.chat.service.core.message.sender.MessageSenderService;
 import com.chat.service.core.message.sender.PrivateMessageCreationParams;
 import com.chat.service.core.message.sender.PublicMessageCreationParams;
+import com.chat.service.core.user.UserService;
 import io.jsonwebtoken.lang.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class MessageFacadeImpl implements MessageFacade {
@@ -35,6 +42,7 @@ public class MessageFacadeImpl implements MessageFacade {
     private final MessageSenderService messageSenderService;
     private final MessageReceiverService messageReceiverService;
     private final ChatService chatService;
+    private final UserService userService;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final JwtService jwtService;
     private final HttpServletRequestHandler httpServletRequestHandler;
@@ -45,7 +53,7 @@ public class MessageFacadeImpl implements MessageFacade {
                              UserMessagePersistenceService userMessagePersistenceService, MessageSenderService messageSenderService,
                              MessageReceiverService messageReceiverService,
                              ChatService chatService,
-                             SimpMessagingTemplate simpMessagingTemplate,
+                             UserService userService, SimpMessagingTemplate simpMessagingTemplate,
                              JwtService jwtService,
                              HttpServletRequestHandler httpServletRequestHandler) {
         Assert.notNull(messagePersistenceService, "Message Persistence Service must not be null");
@@ -54,6 +62,7 @@ public class MessageFacadeImpl implements MessageFacade {
         Assert.notNull(messageReceiverService, "Message Receiver Service must not be null");
         Assert.notNull(messageSenderService, "Message Sender Service must not be null");
         Assert.notNull(chatService, "ChatService must not be null");
+        Assert.notNull(userService, "UserService must not be null");
         Assert.notNull(simpMessagingTemplate, "Simple Messaging Template must not be null");
         Assert.notNull(jwtService, "Jwt Service must not be null");
         Assert.notNull(httpServletRequestHandler, "Http servlet request handler must not be null");
@@ -63,6 +72,7 @@ public class MessageFacadeImpl implements MessageFacade {
         this.messageSenderService = messageSenderService;
         this.messageReceiverService = messageReceiverService;
         this.chatService = chatService;
+        this.userService = userService;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.jwtService = jwtService;
         this.httpServletRequestHandler = httpServletRequestHandler;
@@ -78,26 +88,6 @@ public class MessageFacadeImpl implements MessageFacade {
                 requestDto.getSentTo(),
                 requestDto.getSentBy(),
                 LocalDateTime.now()
-        ));
-
-        Message message = messagePersistenceService.create(new MessageCreationParams(
-                requestDto.getMessage(),
-                requestDto.getSentBy(),
-                LocalDateTime.now()
-        ));
-
-        Optional<Chat> chatOptional = chatService.findByName(requestDto.getSentBy() + " - " + requestDto.getSentTo());
-        Chat chat = chatOptional.orElseGet(() -> chatService.getByName(requestDto.getSentTo() + " - " + requestDto.getSentBy()));
-        System.out.println(chat.getName());
-        chatMessagePersistenceService.create(new ChatMessageCreationParams(
-                chat.getId(),
-                message.getId()
-        ));
-
-        userMessagePersistenceService.create(new UserMessageCreationParams(
-                requestDto.getSentTo(),
-                message.getId(),
-                MessageStatusType.UNSEEN
         ));
 
         SendPrivateMessageResponseDto responseDto = new SendPrivateMessageResponseDto(
@@ -141,6 +131,49 @@ public class MessageFacadeImpl implements MessageFacade {
     }
 
     @Override
+    public SendPrivateMessageResponseDto savePrivateMessage(SendPrivateMessageRequestDto requestDto) {
+        // TODO: ADD VALIDATIONS
+
+        LOGGER.info("Saving a private message according to the SendPrivateMessageRequestDto - {}", requestDto);
+        Assert.notNull(requestDto, "SendPrivateMessageRequestDto must not be null");
+
+        Message message = messagePersistenceService.create(new MessageCreationParams(
+                requestDto.getMessage(),
+                requestDto.getSentBy(),
+                LocalDateTime.now()
+        ));
+
+        Optional<Chat> chatOptional = chatService.findByName(requestDto.getSentBy() + " - " + requestDto.getSentTo());
+        Chat chat = chatOptional.orElseGet(() -> chatService.getByName(requestDto.getSentTo() + " - " + requestDto.getSentBy()));
+        System.out.println(chat.getName());
+        chatMessagePersistenceService.create(new ChatMessageCreationParams(
+                chat.getId(),
+                message.getId()
+        ));
+
+        userMessagePersistenceService.create(new UserMessageCreationParams(
+                requestDto.getSentTo(),
+                message.getId(),
+                MessageStatusType.UNSEEN
+        ));
+
+        SendPrivateMessageResponseDto responseDto = new SendPrivateMessageResponseDto(
+                requestDto.getMessage(),
+                requestDto.getSentTo(),
+                requestDto.getSentBy(),
+                LocalDateTime.now()
+        );
+
+        LOGGER.info("Successfully saved a private message according to the SendPrivateMessageRequestDto - {}, result - {}", requestDto, responseDto);
+        return responseDto;
+    }
+
+    @Override
+    public SendPublicMessageResponseDto savePublicMessage(SendPublicMessageRequestDto requestDto) {
+        return null; // TODO: NEED TO IMPLEMENT THIS METHOD
+    }
+
+    @Override
     public SendNotificationResponseDto sendNotification(SendNotificationRequestDto requestDto) {
         LOGGER.info("Sending a notification according to the SendNotificationRequestDto - {}", requestDto);
         Assert.notNull(requestDto, "SendNotificationRequestDto must not be null");
@@ -157,6 +190,44 @@ public class MessageFacadeImpl implements MessageFacade {
         // not persisting the notification
 
         LOGGER.info("Successfully sent a notification according to the SendNotificationRequestDto - {}, response - {}", requestDto, responseDto);
+        return responseDto;
+    }
+
+    @Override
+    public MessagesInChatListRetrievalResponseDto fetchMessagesInChat(MessagesInChatListRetrievalRequestDto requestDto) {
+        LOGGER.info("Fetching messages in chat according to the MessagesInChatListRetrievalRequestDto - {}", requestDto);
+        Assert.notNull(requestDto, "MessageInChatListRetrievalRequestDto must not be null");
+
+        Long chatId = requestDto.getChatId();
+        String retrieverUsername = requestDto.getRetrieverUsername();
+
+        if(userService.findByUsername(retrieverUsername).isEmpty()) {
+            return new MessagesInChatListRetrievalResponseDto(
+                    List.of(String.format("User %s not found", retrieverUsername))
+            );
+        }
+
+        Optional<Chat> optionalChat = chatService.findById(chatId);
+        if(optionalChat.isEmpty()) {
+            return new MessagesInChatListRetrievalResponseDto(
+                    List.of(String.format("No chat found having an id of %s", chatId))
+            );
+        }
+
+        Chat chat = optionalChat.get();
+        List<MessageDto> messageDtoList = chat.getChatMessages().stream()
+                .map(ChatMessage::getMessage)
+                .map(message -> new MessageDto(message.getBody(), message.getSentBy().getUsername(), chat.getId(), message.getSentAt()))
+                .collect(Collectors.toList());
+
+        MessagesInChatListRetrievalResponseDto responseDto = new MessagesInChatListRetrievalResponseDto(
+                retrieverUsername,
+                chat.getId(),
+                messageDtoList,
+                LocalDateTime.now()
+        );
+
+        LOGGER.info("Successfully retrieved a MessagesInChatListRetrievalResponseDto according to the MessagesInChatListRetrievalRequestDto - {}, result - {}", requestDto, responseDto);
         return responseDto;
     }
 }

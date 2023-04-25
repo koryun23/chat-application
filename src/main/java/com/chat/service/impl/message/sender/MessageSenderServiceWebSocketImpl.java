@@ -25,10 +25,15 @@ public class MessageSenderServiceWebSocketImpl implements MessageSenderService {
     @Transactional
     @Override
     public void sendPrivateMessage(PrivateMessageCreationParams messageCreationParams) {
+        System.out.println("sending a private message to a user");
+//        simpMessagingTemplate.convertAndSendToUser(
+//                messageCreationParams.getSentTo(),
+//                "/user",
+//                messageCreationParams
+//        );
         simpMessagingTemplate.convertAndSendToUser(
                 messageCreationParams.getSentTo(),
-                //String.format("/user/%s", messageCreationParams.getSentTo()),
-                "/user",
+                "",
                 messageCreationParams
         );
     }

@@ -38,7 +38,7 @@ public class UserChatController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
     }
 
     @PostMapping(path = "/create")
@@ -49,7 +49,7 @@ public class UserChatController {
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseDto);
     }
 
     @GetMapping(path = "/{chatId}")
@@ -65,18 +65,7 @@ public class UserChatController {
         if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseDto);
     }
-
-//    @GetMapping(path = "/{userId}")
-//    public ResponseEntity<AllChatsRetrievalResponseDto> getChatsOfUser(@PathVariable Long userId, HttpServletRequest request) {
-//        AllChatsRetrievalRequestDto requestDto = new AllChatsRetrievalRequestDto(httpServletRequestHandler.extractUsername(request), userId);
-//        AllChatsRetrievalResponseDto responseDto = chatFacade.retrieveChatsOfUser(requestDto);
-//
-//        if(responseDto.getErrors() == null || responseDto.getErrors().size() == 0) {
-//            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-//        }
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-//    }
 }
 

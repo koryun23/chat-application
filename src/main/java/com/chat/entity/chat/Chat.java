@@ -83,17 +83,29 @@ public class Chat {
         this.usersInChat = usersInChat;
     }
 
+    public List<ChatMessage> getChatMessages() {
+        return chatMessages;
+    }
+
+    public void setChatMessages(List<ChatMessage> chatMessages) {
+        this.chatMessages = chatMessages;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Chat chat = (Chat) o;
-        return Objects.equals(id, chat.id) && Objects.equals(name, chat.name) && Objects.equals(createdAt, chat.createdAt) && chatType == chat.chatType && Objects.equals(usersInChat, chat.usersInChat);
+        return Objects.equals(id, chat.id) &&
+                Objects.equals(name, chat.name) &&
+                Objects.equals(createdAt, chat.createdAt) &&
+                chatType == chat.chatType &&
+                Objects.equals(usersInChat, chat.usersInChat);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, createdAt, chatType, usersInChat);
+        return Objects.hash(id, name, createdAt, chatType, usersInChat, chatMessages);
     }
 
     @Override

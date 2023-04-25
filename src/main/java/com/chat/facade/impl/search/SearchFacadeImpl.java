@@ -111,7 +111,7 @@ public class SearchFacadeImpl implements SearchFacade {
         }
 
         User user = optionalUser.get();
-        List<ChatDto> chatDtos = userChatService.getAllUserChatsByUserId(user.getId()).stream().map(UserChat::getChat).map(chat -> new ChatDto(chat.getName(), chat.getChatType(), chat.getCreatedAt())).collect(Collectors.toList());
+        List<ChatDto> chatDtos = userChatService.getAllUserChatsByUserId(user.getId()).stream().map(UserChat::getChat).map(chat -> new ChatDto(chat.getId(), chat.getName(), chat.getChatType(), chat.getCreatedAt())).collect(Collectors.toList());
         AllChatsRetrievalResponseDto responseDto = new AllChatsRetrievalResponseDto(user.getId(), chatDtos, LocalDateTime.now());
 
         LOGGER.info("Successfully retrieved all chats of a user according to the ChatListRetrievalRequestDto - {}, result - {}", requestDto, responseDto);
@@ -143,6 +143,7 @@ public class SearchFacadeImpl implements SearchFacade {
             }
             if(usernames.contains(retrieverUsername)) {
                 chatDtoList.add(new ChatDto(
+                        chat.getId(),
                         chat.getName(),
                         chat.getChatType(),
                         chat.getCreatedAt()

@@ -97,7 +97,7 @@ create sequence user_sequence start 1 increment 50
 
     create table user_message (
        id int8 not null,
-        message_status_type int4 not null,
+        message_status_type varchar(255) not null,
         message_id int8 not null,
         user_id int8 not null,
         primary key (id)
