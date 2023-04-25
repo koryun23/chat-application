@@ -26,14 +26,9 @@ public class MessageSenderServiceWebSocketImpl implements MessageSenderService {
     @Override
     public void sendPrivateMessage(PrivateMessageCreationParams messageCreationParams) {
         System.out.println("sending a private message to a user");
-//        simpMessagingTemplate.convertAndSendToUser(
-//                messageCreationParams.getSentTo(),
-//                "/user",
-//                messageCreationParams
-//        );
         simpMessagingTemplate.convertAndSendToUser(
                 messageCreationParams.getSentTo(),
-                "",
+                "/private",
                 messageCreationParams
         );
     }
