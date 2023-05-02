@@ -217,7 +217,7 @@ public class MessageFacadeImpl implements MessageFacade {
         Chat chat = optionalChat.get();
         List<MessageDto> messageDtoList = chat.getChatMessages().stream()
                 .map(ChatMessage::getMessage)
-                .map(message -> new MessageDto(message.getBody(), message.getSentBy().getUsername(), chat.getId(), message.getSentAt()))
+                .map(message -> new MessageDto(message.getBody(), message.getSentBy().getUsername(), chat.getName(), message.getSentAt()))
                 .collect(Collectors.toList());
 
         MessagesInChatListRetrievalResponseDto responseDto = new MessagesInChatListRetrievalResponseDto(
