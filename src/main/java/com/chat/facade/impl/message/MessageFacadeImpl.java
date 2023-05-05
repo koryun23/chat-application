@@ -15,6 +15,7 @@ import com.chat.entity.message.Message;
 import com.chat.entity.message.type.MessageStatusType;
 import com.chat.facade.core.message.MessageFacade;
 import com.chat.handler.HttpServletRequestHandler;
+import com.chat.helper.Utils;
 import com.chat.service.core.chat.ChatService;
 import com.chat.service.core.jwt.JwtService;
 import com.chat.service.core.message.persist.*;
@@ -79,25 +80,23 @@ public class MessageFacadeImpl implements MessageFacade {
     }
 
     @Override
-    public SendPrivateMessageResponseDto sendPrivateMessage(SendPrivateMessageRequestDto requestDto) {
-        LOGGER.info("Sending a private message according to Send Private Message Request dto - {}", requestDto);
-        Assert.notNull(requestDto, "Send Private Message Request Dto must not be null");
+    public SendPrivateMessageResponseDto sendPrivateMessage(MessageDto messageDto) {
+        LOGGER.info("Sending a private message - {}", messageDto);
+        Assert.notNull(messageDto, "Message Dto must not be null");
 
-        messageSenderService.sendPrivateMessage(new PrivateMessageCreationParams(
-                requestDto.getMessage(),
-                requestDto.getSentTo(),
-                requestDto.getSentBy(),
-                LocalDateTime.now()
-        ));
+        messageSenderService.sendPrivateMessage(messageDto);
+
+        String sentBy = messageDto.getSentBy();
+        String message = messageDto.getMessage();
 
         SendPrivateMessageResponseDto responseDto = new SendPrivateMessageResponseDto(
-                requestDto.getMessage(),
-                requestDto.getSentTo(),
-                requestDto.getSentBy(),
+                message,
+                Utils.getOtherUserFromPrivateChat(messageDto.getChatName(), sentBy),
+                sentBy,
                 LocalDateTime.now()
         );
 
-        LOGGER.info("Successfully sent a private message according to Send Private Message Request Dto - {}, result - {}", requestDto, responseDto);
+        LOGGER.info("Successfully sent a private message - {}, result - {}", messageDto, responseDto);
         return responseDto;
     }
 
@@ -131,40 +130,40 @@ public class MessageFacadeImpl implements MessageFacade {
     }
 
     @Override
-    public SendPrivateMessageResponseDto savePrivateMessage(SendPrivateMessageRequestDto requestDto) {
+    public SendPrivateMessageResponseDto savePrivateMessage(MessageDto messageDto) {
         // TODO: ADD VALIDATIONS
 
-        LOGGER.info("Saving a private message according to the SendPrivateMessageRequestDto - {}", requestDto);
-        Assert.notNull(requestDto, "SendPrivateMessageRequestDto must not be null");
+        LOGGER.info("Saving a private message - {}", messageDto);
+        Assert.notNull(messageDto, "Message dto must not be null");
 
         Message message = messagePersistenceService.create(new MessageCreationParams(
-                requestDto.getMessage(),
-                requestDto.getSentBy(),
+                messageDto.getMessage(),
+                messageDto.getSentBy(),
                 LocalDateTime.now()
         ));
 
-        Optional<Chat> chatOptional = chatService.findByName(requestDto.getSentBy() + " - " + requestDto.getSentTo());
-        Chat chat = chatOptional.orElseGet(() -> chatService.getByName(requestDto.getSentTo() + " - " + requestDto.getSentBy()));
-        System.out.println(chat.getName());
+        Chat chat = chatService.getByName(messageDto.getChatName());
+        String sentTo = Utils.getOtherUserFromPrivateChat(chat.getName(), messageDto.getSentBy());
+
         chatMessagePersistenceService.create(new ChatMessageCreationParams(
                 chat.getId(),
                 message.getId()
         ));
 
         userMessagePersistenceService.create(new UserMessageCreationParams(
-                requestDto.getSentTo(),
+                sentTo,
                 message.getId(),
                 MessageStatusType.UNSEEN
         ));
 
         SendPrivateMessageResponseDto responseDto = new SendPrivateMessageResponseDto(
-                requestDto.getMessage(),
-                requestDto.getSentTo(),
-                requestDto.getSentBy(),
+                messageDto.getMessage(),
+                sentTo,
+                messageDto.getSentBy(),
                 LocalDateTime.now()
         );
 
-        LOGGER.info("Successfully saved a private message according to the SendPrivateMessageRequestDto - {}, result - {}", requestDto, responseDto);
+        LOGGER.info("Successfully saved a private message - {}, result - {}", messageDto, responseDto);
         return responseDto;
     }
 
@@ -222,7 +221,7 @@ public class MessageFacadeImpl implements MessageFacade {
 
         MessagesInChatListRetrievalResponseDto responseDto = new MessagesInChatListRetrievalResponseDto(
                 retrieverUsername,
-                chat.getId(),
+                chat.getName(),
                 messageDtoList,
                 LocalDateTime.now()
         );

@@ -1,5 +1,6 @@
 package com.chat.facade.core.message;
 
+import com.chat.dto.plain.MessageDto;
 import com.chat.dto.request.MessagesInChatListRetrievalRequestDto;
 import com.chat.dto.request.SendNotificationRequestDto;
 import com.chat.dto.request.SendPrivateMessageRequestDto;
@@ -13,11 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface MessageFacade {
 
-    SendPrivateMessageResponseDto sendPrivateMessage(SendPrivateMessageRequestDto requestDto);
+    SendPrivateMessageResponseDto sendPrivateMessage(MessageDto messageDto);
 
     SendPublicMessageResponseDto sendPublicMessage(SendPublicMessageRequestDto requestDto);
 
-    SendPrivateMessageResponseDto savePrivateMessage(SendPrivateMessageRequestDto requestDto);
+    SendPrivateMessageResponseDto savePrivateMessage(MessageDto messageDto);
 
     SendPublicMessageResponseDto savePublicMessage(SendPublicMessageRequestDto requestDto);
 

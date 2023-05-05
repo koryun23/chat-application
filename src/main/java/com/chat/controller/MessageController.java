@@ -1,5 +1,6 @@
 package com.chat.controller;
 
+import com.chat.dto.plain.MessageDto;
 import com.chat.dto.request.MessagesInChatListRetrievalRequestDto;
 import com.chat.dto.request.SendNotificationRequestDto;
 import com.chat.dto.request.SendPrivateMessageRequestDto;
@@ -10,6 +11,7 @@ import com.chat.dto.response.SendPrivateMessageResponseDto;
 import com.chat.dto.response.SendPublicMessageResponseDto;
 import com.chat.facade.impl.message.MessageFacadeImpl;
 import com.chat.handler.HttpServletRequestHandler;
+import com.chat.helper.Utils;
 import io.jsonwebtoken.lang.Assert;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,17 +47,15 @@ public class MessageController {
     }
 
     @MessageMapping("/private-message") // /private-message
-    public SendPrivateMessageResponseDto receivePrivateMessage(@Payload SendPrivateMessageRequestDto requestDto) {
+    public SendPrivateMessageResponseDto receivePrivateMessage(@Payload MessageDto messageDto) {
         // when receiving a private message on the mapping /private-message, it is being SENT to the appropriate user
-        System.out.println("Entering the receivePrivateMessage method");
-        System.out.println("SendPrivateMessageRequestDto " + requestDto);
-        // requestDto.setSentBy(httpServletRequestHandler.extractUsername(request));
-        return messageFacade.sendPrivateMessage(requestDto);
+
+        return messageFacade.sendPrivateMessage(messageDto);
     }
 
     @PostMapping("/private-message/save")
-    public SendPrivateMessageResponseDto savePrivateMessage(@RequestBody SendPrivateMessageRequestDto requestDto) {
-        return messageFacade.savePrivateMessage(requestDto);
+    public SendPrivateMessageResponseDto savePrivateMessage(@RequestBody MessageDto messageDto) {
+        return messageFacade.savePrivateMessage(messageDto);
     }
 
     //TODO: ADD A savePublicMessage method with a post mapping of /public-message/save

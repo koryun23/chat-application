@@ -1,5 +1,6 @@
 package com.chat.service.impl.message.sender;
 
+import com.chat.dto.plain.MessageDto;
 import com.chat.service.core.message.sender.MessageSenderService;
 import com.chat.service.core.message.sender.PrivateMessageCreationParams;
 import com.chat.service.core.message.sender.PublicMessageCreationParams;
@@ -18,8 +19,8 @@ public class MessageSenderServiceJMSImpl implements MessageSenderService {
     // this method should store the sent message and all its details in the database
     @Transactional
     @Override
-    public void sendPrivateMessage(PrivateMessageCreationParams privateMessageCreationParams) {
-        jmsTemplate.convertAndSend(privateMessageCreationParams);
+    public void sendPrivateMessage(MessageDto messageDto) {
+        jmsTemplate.convertAndSend(messageDto);
     }
 
     @Transactional

@@ -9,7 +9,7 @@ import java.util.Objects;
 public class MessagesInChatListRetrievalResponseDto {
 
     private String retrieverUsername;
-    private Long chatId;
+    private String chatName;
     private List<MessageDto> messageDtoList;
     private LocalDateTime retrievedAt;
 
@@ -18,9 +18,9 @@ public class MessagesInChatListRetrievalResponseDto {
     public MessagesInChatListRetrievalResponseDto() {
     }
 
-    public MessagesInChatListRetrievalResponseDto(String retrieverUsername, Long chatId, List<MessageDto> messageDtoList, LocalDateTime retrievedAt) {
+    public MessagesInChatListRetrievalResponseDto(String retrieverUsername, String chatName, List<MessageDto> messageDtoList, LocalDateTime retrievedAt) {
         this.retrieverUsername = retrieverUsername;
-        this.chatId = chatId;
+        this.chatName = chatName;
         this.messageDtoList = messageDtoList;
         this.retrievedAt = retrievedAt;
     }
@@ -37,12 +37,12 @@ public class MessagesInChatListRetrievalResponseDto {
         this.retrieverUsername = retrieverUsername;
     }
 
-    public Long getChatId() {
-        return chatId;
+    public String getChatName() {
+        return chatName;
     }
 
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
+    public void setChatName(String chatName) {
+        this.chatName = chatName;
     }
 
     public List<MessageDto> getMessageDtoList() {
@@ -74,19 +74,19 @@ public class MessagesInChatListRetrievalResponseDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MessagesInChatListRetrievalResponseDto that = (MessagesInChatListRetrievalResponseDto) o;
-        return Objects.equals(retrieverUsername, that.retrieverUsername) && Objects.equals(chatId, that.chatId) && Objects.equals(messageDtoList, that.messageDtoList) && Objects.equals(retrievedAt, that.retrievedAt) && Objects.equals(errors, that.errors);
+        return Objects.equals(retrieverUsername, that.retrieverUsername) && Objects.equals(chatName, that.chatName) && Objects.equals(messageDtoList, that.messageDtoList) && Objects.equals(retrievedAt, that.retrievedAt) && Objects.equals(errors, that.errors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(retrieverUsername, chatId, messageDtoList, retrievedAt, errors);
+        return Objects.hash(retrieverUsername, chatName, messageDtoList, retrievedAt, errors);
     }
 
     @Override
     public String toString() {
         return "MessagesInChatListRetrievalResponseDto{" +
                 "retrieverUsername='" + retrieverUsername + '\'' +
-                ", chatId=" + chatId +
+                ", chatName=" + chatName +
                 ", messageDtoList=" + messageDtoList +
                 ", retrievedAt=" + retrievedAt +
                 ", errors=" + errors +
